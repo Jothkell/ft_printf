@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 15:12:22 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/09/14 16:02:31 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/09/14 16:02:17 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ int		digit(va_list ap, char *format, t_ap *tree)//this should convert all to int
 		holder = (intmax_t)va_arg(ap, long);
 	else if (format[-1] == 'j')
 		holder = (intmax_t)va_arg(ap, intmax_t);
-	else if (format[-1] == 'z')
+	else if (format[-1] == 'j')
         holder = (intmax_t)va_arg(ap, size_t); 
 	else 
 		holder = (intmax_t)va_arg(ap, int);

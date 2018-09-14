@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 16:24:30 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/09/14 15:37:52 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/09/14 13:14:35 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@
 # define isFLAG(x) (x == '#' || x == '-' || x == '+')
 # define Oxl(tree) ((tree->left || tree->z_pad) && hash(tree) && (tree->car == 'x' || tree->car == 'X'))
 # define O(tree) (tree->car == 'o' || tree->car == 'O')
-# define X(tree) (tree->car == 'x' || tree->car == 'X')
 # define hash(tree) (tree->hash && !tree->zero)
 # define Oxr(tree) ((!tree->left && !(tree->zero && tree->dot)) && tree->hash && !tree->zero && !tree->z_pad && (tree->car == 'x' || tree->car == 'X'))
 # define SingleSpace(x) (x->space && !x->left && !x->O && !x->X && !x->percent && !x->l && !x->ll && !x->decimal && !x->hash && !x->zero && !x->zero && !x->z_pad && !x->dot && !x->plus && (x->prec == 10000) && (x->width == 0))
@@ -60,7 +59,6 @@ struct					s_ap
 	uint8_t z_pad;
 	uint8_t dot;
 	uint8_t plus;
-	uint8_t neg;
 	uint8_t space;
 	char *c;
 	char car;
