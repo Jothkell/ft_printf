@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 15:12:22 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/09/14 16:02:31 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/09/15 21:55:41 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,34 +18,6 @@
 
 #include "printf.h"
 
- /*
-int     precision(char *format, va_list ap, t_ap *tree)
-{
-    tree->prec = 10000;
-    tree->width = 0;
-    format--;
-    while (*format != '.' && *format != '%' && !isFLAG(*format))
-        format--;
-    if(!ft_atoi(&format[1]) && !ft_atoi(&format[-1]))
-    {
-        tree->prec = 10000;
-        return (10000);
-    }
-    format += (isFLAG(format[1])) ? (1) : (0);
-    tree->z_pad = (format[1] == '0' && format[0] != '.') ? (1) : (tree->z_pad);
-    tree->prec = (format[1] == '*') ? (va_arg(ap, int)) : (tree->prec);
-    tree->prec = (format[0] == '.') ? (ft_atoi(&format[1])) : (tree->prec);
-    tree->width = (isDIGIT(format[1]) && !tree->dot) ? (ft_atoi(&format[1])) : (tree->width);
-    //tree->prec -= (isDIGIT(format[1])) ? (tree->prec) : (0);
-    while (isDIGIT(format[-1]) && format[1] != '*')
-        format--;
-    tree->width = (format[1] == '*') ? (va_arg(ap, int)) : (tree->width);//ft_atoi(&format[0]));
-	tree->z_pad = (*format == '0') ? (1) : (tree->z_pad);
-    tree->width = (isDIGIT(*format)) ? (ft_atoi(format)) : (tree->width);
-    tree->width -= (tree->hash && tree->car != 'o' && tree->car != 'O') ? (2) : (tree->width);
-    tree->width -= ((tree->car == 'o' || tree->car == 'O') && tree->hash) ? (1) : (tree->width);
-    return (tree->prec);
-	}*/
 
  int     precision(char *format, va_list ap, t_ap *tree)
 {
@@ -73,12 +45,12 @@ int     udigit(va_list ap, char *format, t_ap *tree)//this should convert all to
     intmax_t    base;
     uintmax_t   uholder = 0;
 
-    if ((format[0] != 'd' && format[0] != 'u' && format[0] != 'i') || !(base = 10))
+    if ((format[0] != 'd' && format[0] != 'u' && format[0] != 'U' && format[0] != 'i') || !(base = 10))
         base = (format[0] == 'x' || format[0] == 'X') ? (16) : (2);
     base = (format[0] == 'o' || format[0] == 'O') ? (8) : (base);
     if (is_unsign(format) && HH(format))
         uholder = (uintmax_t)va_arg(ap, unsigned char);
-    else if (is_unsign(format) && format[-1] == 'h')
+    else if (format[-1] == 'h' && is_unsign(format))
         uholder = (uintmax_t)va_arg(ap, unsigned short);
     else if (is_unsign(format) && LL(format))
         uholder = (uintmax_t)va_arg(ap, unsigned long long);
@@ -88,7 +60,9 @@ int     udigit(va_list ap, char *format, t_ap *tree)//this should convert all to
         uholder = (uintmax_t)va_arg(ap, uintmax_t);
     else if (format[-1] == 'z')
         uholder = (uintmax_t)va_arg(ap, size_t);
-    else if (is_unsign(format))
+    else if (*format == 'U')
+        uholder = (uintmax_t)va_arg(ap, unsigned long);
+	else
         uholder = (uintmax_t)va_arg(ap, unsigned int);
     tree->zero = (uholder == 0) ? (1) : (0);
 	ft_putstr_fd_prec(ft_umaxtoa_base(uholder, base, tree->c), 1, precision(format, ap, tree), tree, tree->c[0]);
@@ -190,7 +164,8 @@ void	assign_functs(int (**p) (va_list ap, char *format, t_ap *tree), t_ap *tree)
     tree->hash = 0;
     tree->zero = 0;
     tree->z_pad = 0;
-    tree->dot = 0;;
+    tree->dot = 0;
+	p['U'] = udigit;
 	p['u'] = udigit;
 	p['O'] = udigit;
 	p['o'] = udigit;
@@ -267,15 +242,14 @@ int main()
 	//unsigned long long ULLONG_MAX = 18446744073709551615;
     double dog = 420.555555;
     double doggy = 420.55555555555555;
-	ret = ft_printf("%lld", -9223372036854775808);
-	//ft_printf("%lx", -4294967296);
+	ret = ft_printf("%U", 4294967296);
+	//ft_printf("%U", 4294967295);
 	printf("\n");
-	ret2 = printf("%lld", -9223372036854775808);
+	ret2 = printf("%U", 4294967296);
 
-	//printf("%lx", -4294967296);
+	//printf("%U", 4294967295);
 	printf("\n");
 	printf("%d %d\n", ret, ret2);
 	return(0);
-	}
-
+}
 */

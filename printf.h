@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 16:24:30 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/09/14 15:37:52 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/09/15 20:25:38 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 # define IS_UPPER(x) (x >= 'A' && x <= 'Z')
 # define IS_LOWER(x) (x >= 'a' && x <= 'z')
 # define IS_TYPE(x) (x == 's' || x == 'S' || x == 'p' || x == 'd' || x == 'D' || x == 'i' || x == 'o' || x == 'O' || x == 'u' || x == 'U' || x == 'x' || x == 'X' || x == 'c' || x == 'C' || x == 'b' || x == 'f' || x == 'F' || x == 'a' || x == 'A' || x == '%')
-# define NUMBERS(x) (*x == 'd' || *x == 'D' || *x == 'x' || *x == 'X' || *x == 'b' || *x == 'o' || *x == 'O')
+# define NUMBERS(x) (*x == 'd' || *x == 'D' || *x == 'x' || *x == 'X' || *x == 'b' || *x == 'o' || *x == 'O' || *x == 'u')
 # define FLOATS(x) (*x == 'f' || *x == 'F' || *x =='a' || *x == 'A')
 # define isDIGIT(x) (x == '0' || x == '1' || x == '2' || x == '3' || x == '4' || x == '5' || x == '6' || x == '7' || x == '8' || x == '9')
 # define isID(x) (x == 'h' || x == 'l' || x == 'j' || x == 'z')
@@ -32,12 +32,12 @@
 # define LL(x) (x[-1] == 'l' && x[-2] == 'l')
 # define is_unsign(x) (*x == 'x' || *x == 'X' || *x == 'o' || *x == 'O' || *x == 'u')
 # define isFLAG(x) (x == '#' || x == '-' || x == '+')
-# define Oxl(tree) ((tree->left || tree->z_pad) && hash(tree) && (tree->car == 'x' || tree->car == 'X'))
+# define Ox(tree) (hash(tree) && !tree->zero && (tree->car == 'x' || tree->car == 'X'))
 # define O(tree) (tree->car == 'o' || tree->car == 'O')
 # define X(tree) (tree->car == 'x' || tree->car == 'X')
-# define hash(tree) (tree->hash && !tree->zero)
-# define Oxr(tree) ((!tree->left && !(tree->zero && tree->dot)) && tree->hash && !tree->zero && !tree->z_pad && (tree->car == 'x' || tree->car == 'X'))
-# define SingleSpace(x) (x->space && !x->left && !x->O && !x->X && !x->percent && !x->l && !x->ll && !x->decimal && !x->hash && !x->zero && !x->zero && !x->z_pad && !x->dot && !x->plus && (x->prec == 10000) && (x->width == 0))
+# define hash(tree) (tree->hash)
+//# define Oxr(tree) ((!tree->left && !(tree->zero && tree->dot)) && tree->hash && !tree->zero && !tree->z_pad && (tree->car == 'x' || tree->car == 'X'))
+# define SingleSpace(x) (x->car == 'd' && x->space && !x->neg && !x->left && !x->O && !x->X && !x->percent && !x->l && !x->ll && !x->decimal && !x->hash && !x->zero && !x->z_pad && !x->dot && !x->plus && (x->prec == 10000) && (x->width <= 0))
 
 
 typedef struct s_ap t_ap;
