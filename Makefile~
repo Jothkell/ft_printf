@@ -6,7 +6,7 @@
 #    By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/08/14 21:44:46 by jkellehe          #+#    #+#              #
-#    Updated: 2018/09/19 09:05:26 by jkellehe         ###   ########.fr        #
+#    Updated: 2018/09/18 21:13:19 by jkellehe         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -23,7 +23,7 @@ LIB = libft
 all:  $(NAME)
 
 $(NAME):
-	@gcc -g -c $(SRC) -I$(HEADER)
+	@gcc -g -c -fsanitize=address $(SRC) -I$(HEADER)
 	@make -C $(LIB)
 	@cp libft/libft.a $(NAME)
 	@ar rc $(NAME) *.o

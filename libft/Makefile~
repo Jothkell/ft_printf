@@ -6,7 +6,7 @@
 #    By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/06/18 15:10:56 by jkellehe          #+#    #+#              #
-#    Updated: 2018/09/19 09:06:38 by jkellehe         ###   ########.fr        #
+#    Updated: 2018/09/18 21:13:04 by jkellehe         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -29,7 +29,7 @@ HEADER = libft.h
 all: $(NAME)
 
 $(NAME):
-	gcc -c -Wall -Wextra -Werror $(SRC) -I$(HEADER)
+	gcc -c -Wall -Wextra -Werror -fsanitize=address $(SRC) -I$(HEADER)
 	ar rc $(NAME) *.o
 	ranlib $(NAME)
 

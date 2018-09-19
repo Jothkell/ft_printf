@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/24 18:51:31 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/09/14 10:55:12 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/09/15 20:27:48 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,44 +52,55 @@ int bt_putchar(char c, int times)
 }
 
 
+void  precwidth(int many, t_ap *tree, int prec)
+{  
+	while(many > 0)
+	{
+		tree->ret += ((tree->z_pad && !tree->left && (tree->prec == 10000)) || prec) ? (write(1, "0", 1)) : (write(1, " ", 1));
+		many--;
+	}
+}
+
+int bt_strlen(const char *s, t_ap *tree, int prec)
+{
+	int i;
+	int len;
+
+	len = 0;
+	i = 0;
+	while (s[i] != '\0')
+		len += (s[i++] == '-' && prec) ? (0) : (1);
+	len += (tree->plus && !tree->neg && !prec) ? (1) : (0);
+	return (len);
+
+}
 
 char *ft_pad(char *s, int prec, t_ap *tree)
 {
-	int i;
-	int hold;
-    int widthh;
-    int prech;
-	int len;
+//tree->prec, tree->width, z_pad, etc
+//prec is always before number print, plus is always before prec.  
+	tree->prec = (tree->prec > ft_strlen(s)) ? (tree->prec) : (10000);
+	tree->prec -= (tree->prec == 10000) ? (0) : (bt_strlen(s, tree, 1));
+	tree->width -= (tree->prec == 10000) ? (bt_strlen(s, tree, 0)) : (tree->prec + bt_strlen(s, tree, 0));
+	//tree->width += (tree->plus && s[0] == '-') ? (1) : (0);
+	tree->width += (!(tree->zero && tree->dot && !tree->z_pad)) ? (0) : (1);
 
-    prech = tree->prec;
-    prech = (prech > ft_strlen(s)) ? (prech) : (10000);
-	tree->prec = prech;
-    widthh = tree->width;
-    widthh -= (prech != 10000) ? (prech) : (ft_strlen(s) - tree->zero);
-	prech = (prech != 10000) ? (prech - ft_strlen(s)) : (prech);
-	prech = (tree->car == 'x' || tree->car == 'X') ? (10000) : (prech);
-    tree->ret += (Oxl(tree) && IS_LOWER(tree->car)) ? (write(1, "0x", 2)) : (0);
-    tree->ret += (Oxl(tree) && !IS_LOWER(tree->car)) ? (write(1, "0X", 2)) : (0);
-	tree->ret += (O(tree) && hash(tree) && tree->left) ? (write(1, "0", 1)) : (0);
-	while (prech != 10000 && (prech > 0) && NUMBERS(tree->c))
-	{
-		tree->ret += ((tree->c[0] != 'x' && tree->c[0] != 'X') || tree->z_pad) ? (write(1, "0", 1)) : (write(1, " ", 1));
-		prech--;
-	}
-    tree->ret += (tree->left && Oxr(tree) && IS_LOWER(tree->car)) ? (write(1, "0x", 2)) : (0);
-    tree->ret += (tree->left && Oxr(tree) && !IS_LOWER(tree->car)) ? (write(1, "0X", 2)) : (0);
-    tree->ret += (tree->left && O(tree) && !tree->left) ? (write(1, "0", 1)) : (0);
-    tree->ret += (tree->left && !(tree->zero && tree->dot && !(tree->hash && O(tree)))) ? (bt_putstr_fd(ft_strsub(s, 0, tree->prec), 1, tree)) : (0);
-    while (widthh > 0)
-    {
-        tree->ret += (tree->z_pad && !tree->left) ? (write(1, "0", 1)) : (write(1, " ", 1));
-        widthh--;
-    }
-	tree->ret += (!tree->left && Oxr(tree) && IS_LOWER(tree->car)) ? (write(1, "0x", 2)) : (0);
-    tree->ret += (!tree->left && Oxr(tree) && !IS_LOWER(tree->car)) ? (write(1, "0X", 2)) : (0);
-    tree->ret += (O(tree) && hash(tree) && !tree->left) ? (write(1, "0", 1)) : (0);
-	tree->ret += (!tree->left && !(tree->zero && tree->dot && !(tree->hash && O(tree)))) ? (bt_putstr_fd(ft_strsub(s, 0, tree->prec), 1, tree)) : (0);
-	return (s);
+    //tree->ret += (tree->plus && s[0] != '-' && tree->z_pad) ? (write(1, "+", 1)) : (0);
+
+	(!tree->left && !tree->z_pad) ? (precwidth(tree->width, tree, 0)) : (0);// 
+	//tree->ret += (tree->plus && s[0] != '-' && !) ? (write(1, "+", 1)) : (0);
+    tree->ret += (Ox(tree) && IS_LOWER(tree->car)) ? (write(1, "0x", 2)) : (0);
+    tree->ret += (Ox(tree) && !IS_LOWER(tree->car)) ? (write(1, "0X", 2)) : (0);
+    tree->ret += (O(tree) && hash(tree)) ? (write(1, "0", 1)) : (0);
+
+    tree->ret += (tree->plus && s[0] != '-' && tree->car != 'u') ? (write(1, "+", 1)) : (0);
+    tree->ret += (s[0] == '-') ? (write(1, "-", 1)) : (0);
+    s += (s[0] == '-') ? (1) : (0);
+    (tree->z_pad && !tree->left) ? (precwidth(tree->width, tree, 0)) : (0);//
+	(tree->prec != 10000) ? (precwidth(tree->prec, tree, 1)) : (0);
+	tree->ret += (SingleSpace(tree)) ? (write(1, " ", 1)) : (0);
+    tree->ret += (!(tree->zero && tree->dot && !tree->z_pad)) ? ( bt_putstr_fd(s, 1, tree)) : (0);
+    (tree->left) ? (precwidth(tree->width, tree, 0)) : (0);//
 }
 
 char *ft_spad(char *s, int prec, t_ap *tree)
@@ -178,6 +189,8 @@ char            *ft_maxtoa_base(intmax_t n, intmax_t base, char *format)
 	digits = "0123456789ABCDEF";
 	if (IS_LOWER(format[0]))
 		digits = "0123456789abcdef";
+	if (n == -9223372036854775808 && base == 10)
+		return ("-9223372036854775808");
     len = count_size(n);
     tmp = n;
     if (n < 0 && ++len)
