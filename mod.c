@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/24 18:51:31 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/09/19 10:29:01 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/09/19 14:54:00 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -309,8 +309,8 @@ int			floot(va_list ap, char *format, t_ap *tree)
 	if((tree->prec == 0) && ((((int)(holder * base) % (int)base) >= ((int)base /2)) ||
 							 (((int)(-1 * holder * base) % (int)base) >= ((int)base /2))))
 		holder += (holder > 0) ? (1) : (-1);
-	ft_putstr_fd_prec(ft_maxtoa_base((int)holder, (int)base, format), 1, temp, tree, tree->c[0]);
+	ft_putstr_fd_prec(ft_maxtoa_base((int)holder, (int)base, format), 1, temp, tree);
 	temp = (decimals(holder, base, tree));
-	ft_putstr_fd_prec(ft_maxtoa_base((int)temp, (int)base, format), 1, tree->prec, tree, tree->c[0]);
+	ft_putstr_fd_prec(ft_maxtoa_base((int)temp, (int)base, format), 1, tree->prec, tree);
 	return(0);
 }

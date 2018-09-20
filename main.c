@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 15:12:22 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/09/19 10:26:41 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/09/19 17:46:56 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,9 +89,9 @@ void				digit(va_list ap, char *format, t_ap *tree)
 		precision(format, ap, tree), tree);
 }
 
-void				str(va_list ap, char *format, t_ap *tree)
+void			str(va_list ap, char *format, t_ap *tree)
 {
-	char			*hold;
+	char		*hold;
 
 	hold = va_arg(ap, char*);
 	if (!hold)
@@ -100,47 +100,49 @@ void				str(va_list ap, char *format, t_ap *tree)
 		ft_putstr_fd_prec(hold, 1, precision(format, ap, tree), tree);
 }
 
-void				character(va_list ap, char *format, t_ap *tree)
+void			character(va_list ap, char *format, t_ap *tree)
 {
 	wchar_t		c;
 
 	c = (unsigned char)va_arg(ap, int);
 	precision(format, ap, tree);
 	tree->width--;
-	tree->ret += ((tree->width > 0) && !tree->left) ? (bt_putchar(' ', tree->width)) : (0);
+	tree->ret += ((tree->width > 0) && !tree->left) ?
+		(bt_putchar(' ', tree->width)) : (0);
 	if (!c)
 		tree->ret += (write(1, "^@", 2) - 1);
 	else
 		tree->ret += write(1, &c, 1);
-	tree->ret += ((tree->width > 0) && tree->left) ? (bt_putchar(' ', tree->width)) : (0);
+	tree->ret += ((tree->width > 0) && tree->left) ?
+		(bt_putchar(' ', tree->width)) : (0);
 }
 
-void				percent(va_list ap, char *format, t_ap *tree)
+void			percent(va_list ap, char *format, t_ap *tree)
 {
 	ap += 0;
 	precision(format, ap, tree);
 	tree->width--;
-	while(((tree->width) > 0) && !(tree->left))
+	while (((tree->width) > 0) && !(tree->left))
 	{
 		tree->ret += (tree->z_pad) ? (write(1, "0", 1)) : (write(1, " ", 1));
 		tree->width--;
 	}
 	write(1, "%", 1);
 	tree->ret++;
-	while(((tree->width) > 0) && (tree->left))
+	while (((tree->width) > 0) && (tree->left))
 	{
 		tree->ret += (tree->z_pad) ? (write(1, "0", 1)) : (write(1, " ", 1));
 		tree->width--;
 	}
 }
 
-void				assign_functs(void (**p) (va_list ap, char *format, t_ap *tree), t_ap *tree)
+int		zero_struct(t_ap *tree)
 {
+	//tree->ret = 0;
 	tree->fd = 1;
 	tree->decimal = 0;
 	tree->zero = 0;
 	tree->prec = 0;
-	
 	tree->left = 0;
 	tree->X = 0;
 	tree->O = 0;
@@ -152,7 +154,11 @@ void				assign_functs(void (**p) (va_list ap, char *format, t_ap *tree), t_ap *t
 	tree->hash = 0;
 	tree->zero = 0;
 	tree->z_pad = 0;
-	tree->dot = 0;
+	return ((tree->dot = 0));
+}
+
+int		ass_f(void (**p) (va_list ap, char *format, t_ap *tree), t_ap *tree)
+{
 	p['U'] = udigit;
 	p['u'] = udigit;
 	p['O'] = udigit;
@@ -162,6 +168,7 @@ void				assign_functs(void (**p) (va_list ap, char *format, t_ap *tree), t_ap *t
 	p['x'] = udigit;
 	p['l'] = digit;
 	p['d'] = digit;
+	p['D'] = udigit;
 	p['i'] = digit;
 	p['s'] = str;
 	p['S'] = str;
@@ -171,9 +178,10 @@ void				assign_functs(void (**p) (va_list ap, char *format, t_ap *tree), t_ap *t
 	p['F'] = floot;
 	p['a'] = floot;
 	p['A'] = floot;
+	return (zero_struct(tree));
 }
 
-void				flags(char *c, t_ap *tree)
+void			flags(char *c, t_ap *tree)
 {
 	tree->left = (*c == '-') ? (1) : (tree->left);
 	tree->l = (*c == 'l') ? (1) : (tree->l);
@@ -185,20 +193,18 @@ void				flags(char *c, t_ap *tree)
 	tree->z_pad = (*c == '0' && c[-1] == '%') ? (1) : (tree->z_pad);
 }
 
-int					ft_printf(const char * restrict format, ...)
+int				ft_printf(const char * restrict format, ...)
 {
-	va_list			ap;
-	void			(*p[123]) (va_list ap, char *format, t_ap *tree);
- 	int				i;
-	t_ap			*tree;
-	
-	if (!(tree = (t_ap*)ft_memalloc(sizeof(t_ap) * 3)))
+	va_list		ap;
+	void		(*p[123]) (va_list ap, char *format, t_ap *tree);
+ 	int			i;
+	t_ap		*tree;
+
+	if (!(tree = (t_ap*)ft_memalloc(sizeof(t_ap) * 3)) || (i = 0))
 		return (0);
-	i = 0;
 	tree->ret = 0;
-	assign_functs(p, tree);
 	va_start(ap, format);
-	while (format[i] != '\0')
+	while (format[i] != '\0' && !ass_f(p, tree))
 	{
 		if(format[i] == '%')
 		{
@@ -206,16 +212,11 @@ int					ft_printf(const char * restrict format, ...)
 			while(!IS_TYPE(format[i]) && format[i] != '\0')
 				flags((char*)&format[i++], tree);
 			tree->c = (char*)&format[i];
-			tree->car = format[i];
-			(p[format[i]](ap, (char*)&format[i], tree));
-			assign_functs(p, tree);
-			i++;
+			tree->car = format[i];			
+			p[format[i]](ap, (char*)&format[i++], tree);
 		}
 		else 
-		{
-			write(1, &format[i++], 1);
-			tree->ret++;
-		}
+			tree->ret += write(1, &format[i++], 1);
 	}
 	va_end(ap);
 	return (tree->ret);
@@ -228,13 +229,14 @@ int main()
 	int ret = 0;
 	int ret2 = 0;
 	int fort2 = 42;
+	unsigned short USHRT_MAX = 65535;
 	//unsigned long long ULLONG_MAX = 18446744073709551615;
 	double dog = 420.555555;
 	double doggy = 420.55555555555555;
-	ret = ft_printf("%10s is a string", "this");
+	ret = ft_printf("%S", L"ç");
 	//ft_printf("%U", 4294967295);
 	printf("\n");
-	ret2 = printf("%10s is a string", "this");
+	ret2 = printf("%S", L"ç");
 
 	//printf("%U", 4294967295);
 	printf("\n");
