@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 15:12:22 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/09/20 11:43:47 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/09/20 12:23:32 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,7 +218,7 @@ int				ft_printf(const char *restrict format, ...)
 	va_end(ap);
 	return (tree->ret);
 }
-
+/*
 int main()
 {
 	char	*hey = "whoa";
@@ -237,3 +237,4 @@ int main()
 	return(0);
 }
 
+*/
