@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 15:12:22 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/09/19 17:46:56 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/09/20 11:43:47 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,6 @@ void			percent(va_list ap, char *format, t_ap *tree)
 
 int		zero_struct(t_ap *tree)
 {
-	//tree->ret = 0;
 	tree->fd = 1;
 	tree->decimal = 0;
 	tree->zero = 0;
@@ -193,35 +192,33 @@ void			flags(char *c, t_ap *tree)
 	tree->z_pad = (*c == '0' && c[-1] == '%') ? (1) : (tree->z_pad);
 }
 
-int				ft_printf(const char * restrict format, ...)
+int				ft_printf(const char *restrict format, ...)
 {
 	va_list		ap;
 	void		(*p[123]) (va_list ap, char *format, t_ap *tree);
- 	int			i;
+	int			i;
 	t_ap		*tree;
 
-	if (!(tree = (t_ap*)ft_memalloc(sizeof(t_ap) * 3)) || (i = 0))
+	if (!(tree = (t_ap*)ft_memalloc(sizeof(t_ap) * 3)))
 		return (0);
+	i = ass_f(p, tree);
 	tree->ret = 0;
 	va_start(ap, format);
-	while (format[i] != '\0' && !ass_f(p, tree))
-	{
-		if(format[i] == '%')
+	while (format[i] != '\0')
+		if (format[i] == '%')
 		{
 			i++;
-			while(!IS_TYPE(format[i]) && format[i] != '\0')
+			while (!IS_TYPE(format[i]) && format[i] != '\0')
 				flags((char*)&format[i++], tree);
 			tree->c = (char*)&format[i];
-			tree->car = format[i];			
 			p[format[i]](ap, (char*)&format[i++], tree);
 		}
-		else 
+		else
 			tree->ret += write(1, &format[i++], 1);
-	}
 	va_end(ap);
 	return (tree->ret);
 }
-/*
+
 int main()
 {
 	char	*hey = "whoa";
@@ -230,17 +227,13 @@ int main()
 	int ret2 = 0;
 	int fort2 = 42;
 	unsigned short USHRT_MAX = 65535;
-	//unsigned long long ULLONG_MAX = 18446744073709551615;
-	double dog = 420.555555;
+	double dog = 420420420420.555555;
 	double doggy = 420.55555555555555;
-	ret = ft_printf("%S", L"ç");
-	//ft_printf("%U", 4294967295);
+	ret = ft_printf("%f", dog);
 	printf("\n");
-	ret2 = printf("%S", L"ç");
-
-	//printf("%U", 4294967295);
-	printf("\n");
+	ret2 = printf("%f", dog);
+ 	printf("\n");
 	printf("%d %d\n", ret, ret2);
 	return(0);
 }
-*/
+
