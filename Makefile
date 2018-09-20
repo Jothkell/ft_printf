@@ -6,7 +6,7 @@
 #    By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/08/14 21:44:46 by jkellehe          #+#    #+#              #
-#    Updated: 2018/09/19 09:05:26 by jkellehe         ###   ########.fr        #
+#    Updated: 2018/09/19 18:08:08 by jkellehe         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -25,8 +25,7 @@ all:  $(NAME)
 $(NAME):
 	@gcc -g -c $(SRC) -I$(HEADER)
 	@make -C $(LIB)
-	@cp libft/libft.a $(NAME)
-	@ar rc $(NAME) *.o
+	@ar rc $(NAME) *.o ./libft/*.o
 	@ranlib $(NAME)
 
 clean:
