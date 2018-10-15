@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 15:12:22 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/09/20 12:23:32 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/10/15 12:14:54 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,15 +226,16 @@ int main()
 	int ret = 0;
 	int ret2 = 0;
 	int fort2 = 42;
-	unsigned short USHRT_MAX = 65535;
+	unsigned long long ULLONG_MAX = 18446744073709551615;
 	double dog = 420420420420.555555;
 	double doggy = 420.55555555555555;
-	ret = ft_printf("%f", dog);
+	ret = ft_printf("%ju, %ju", 0, ULLONG_MAX);
 	printf("\n");
-	ret2 = printf("%f", dog);
+	ret2 = printf("%ju, %ju", 0, ULLONG_MAX);
  	printf("\n");
 	printf("%d %d\n", ret, ret2);
 	return(0);
 }
+
 
 */
