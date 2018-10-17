@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/24 18:51:31 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/10/16 19:02:23 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/10/17 12:49:27 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void put_wchar(t_ap *tree, char c)
 {
-	write(1, &c, 1);
+	tree->ret += write(1, &c, 1);
 
 }
 
@@ -40,7 +40,6 @@ void put_wc(t_ap *tree, wchar_t c)
 		put_wchar(tree, ((c >> 6) & 0x3F) | 0x80);
 		put_wchar(tree, (c & 0x3F) | 0x80);
 	}
-	++tree->ret;
 }
 
 int				bt_putstr_fd(char const *s, int fd, t_ap *tree)

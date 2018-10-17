@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 15:12:22 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/10/16 19:23:34 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/10/17 12:50:07 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ void			bt_putwstr(wchar_t *s, int len, t_ap *tree)
 {
 	int i = 0;
 
-	while (i < len)
+	while (s[i])
 	{
 		put_wc(tree, s[i]);
 		i++;
@@ -265,14 +265,15 @@ int main()
 
 	setlocale(LC_ALL, "");
 	printf("mines: \n");
+	//ret = ft_printf("\n");
 	ret = ft_printf("a%Sb%sc%S", L"我", "42", L"猫");
 	printf("\n");
 	printf("theyres: \n");
+	//ret2 = printf("*Kashim a � histoires à raconterIl fait au moins ��cly est fantastique!");
 	ret2 = printf("a%Sb%sc%S", L"我", "42", L"猫");
  	printf("\n");
 	printf("myret:%d thers%d\n", ret, ret2);
 	return(0);
 }
-
 
 */
