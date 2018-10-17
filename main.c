@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 15:12:22 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/10/15 12:14:54 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/10/16 19:23:34 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,10 +89,35 @@ void				digit(va_list ap, char *format, t_ap *tree)
 		precision(format, ap, tree), tree);
 }
 
+void			bt_putwstr(wchar_t *s, int len, t_ap *tree)
+{
+	int i = 0;
+
+	while (i < len)
+	{
+		put_wc(tree, s[i]);
+		i++;
+	}
+}
+
 void			str(va_list ap, char *format, t_ap *tree)
 {
 	char		*hold;
+	int len;	
 
+	if (tree->c[0] == 'S')
+	{
+		wchar_t *yeah;
+		yeah = va_arg(ap, wchar_t*);
+		if (!yeah)
+			tree->ret += write(1, "(null)", 6);
+		else
+		{
+			len = get_wstr_len(yeah);
+			bt_putwstr(yeah, len, tree);
+		}
+		return ;
+	}
 	hold = va_arg(ap, char*);
 	if (!hold)
 		tree->ret += write(1, "(null)", 6);
@@ -110,7 +135,7 @@ void			character(va_list ap, char *format, t_ap *tree)
 	tree->ret += ((tree->width > 0) && !tree->left) ?
 		(bt_putchar(' ', tree->width)) : (0);
 	if (!c)
-		tree->ret += (write(1, "^@", 2) - 1);
+		tree->ret += 1;
 	else
 		tree->ret += write(1, &c, 1);
 	tree->ret += ((tree->width > 0) && tree->left) ?
@@ -156,6 +181,11 @@ int		zero_struct(t_ap *tree)
 	return ((tree->dot = 0));
 }
 
+void oh(va_list ap, char *format, t_ap *tree)
+{
+	tree->ret = -1;
+}
+
 int		ass_f(void (**p) (va_list ap, char *format, t_ap *tree), t_ap *tree)
 {
 	p['U'] = udigit;
@@ -171,6 +201,7 @@ int		ass_f(void (**p) (va_list ap, char *format, t_ap *tree), t_ap *tree)
 	p['i'] = digit;
 	p['s'] = str;
 	p['S'] = str;
+	p['C'] = character;
 	p['c'] = character;
 	p['%'] = percent;
 	p['f'] = floot;
@@ -229,11 +260,17 @@ int main()
 	unsigned long long ULLONG_MAX = 18446744073709551615;
 	double dog = 420420420420.555555;
 	double doggy = 420.55555555555555;
-	ret = ft_printf("%ju, %ju", 0, ULLONG_MAX);
+	wchar_t *help = L"米";
+	int halp = "米";
+
+	setlocale(LC_ALL, "");
+	printf("mines: \n");
+	ret = ft_printf("a%Sb%sc%S", L"我", "42", L"猫");
 	printf("\n");
-	ret2 = printf("%ju, %ju", 0, ULLONG_MAX);
+	printf("theyres: \n");
+	ret2 = printf("a%Sb%sc%S", L"我", "42", L"猫");
  	printf("\n");
-	printf("%d %d\n", ret, ret2);
+	printf("myret:%d thers%d\n", ret, ret2);
 	return(0);
 }
 
