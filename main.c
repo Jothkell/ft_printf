@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 15:12:22 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/10/17 12:50:07 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/01 17:51:12 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,8 +134,11 @@ void			character(va_list ap, char *format, t_ap *tree)
 	tree->width--;
 	tree->ret += ((tree->width > 0) && !tree->left) ?
 		(bt_putchar(' ', tree->width)) : (0);
-	if (!c)
+	if (!c && !tree->dot)
+	{
+		write(1, "^@", 2);
 		tree->ret += 1;
+	}
 	else
 		tree->ret += write(1, &c, 1);
 	tree->ret += ((tree->width > 0) && tree->left) ?
@@ -266,14 +269,13 @@ int main()
 	setlocale(LC_ALL, "");
 	printf("mines: \n");
 	//ret = ft_printf("\n");
-	ret = ft_printf("a%Sb%sc%S", L"我", "42", L"猫");
+	ret = ft_printf("{%10d}", 42);
 	printf("\n");
 	printf("theyres: \n");
 	//ret2 = printf("*Kashim a � histoires à raconterIl fait au moins ��cly est fantastique!");
-	ret2 = printf("a%Sb%sc%S", L"我", "42", L"猫");
+	ret2 = printf("{%10d}", 42);
  	printf("\n");
-	printf("myret:%d thers%d\n", ret, ret2);
+	printf("myret:%d thers:%d\n", ret, ret2);
 	return(0);
 }
-
 */
