@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 15:12:22 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/12 22:55:40 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/12 23:01:21 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -383,7 +383,7 @@ int				ft_printf(const char *restrict format, ...)
 	va_end(ap);
 	return (tree->ret);
 }
-
+/*
 int main()
 {
 	int ret = 0;
