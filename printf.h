@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 16:24:30 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/10/16 16:45:16 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/12 10:47:51 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,16 @@
 # include <stdio.h>
 # include "libft/libft.h"
 # include <locale.h>
+# include <limits.h>
 
-
+# define plus(x) (x != 'o' && x != 'O' && x != 'u')
+# define thicc(x) (*x == 'S' || *x == 'C' || (x[-1] == 'l' && (*x == 's')))
 # define baseTEN(x) (x == 'd' || x == 'D' || x == 'u' || x == 'U' || x == 'i')
 # define ExOr(x, y) ((x && !y) || (!x && y))
 # define INPUTS(x) (IS_TYPE(x) || isDIGIT(x) || isID(x) || isFLAG(x))
 # define IS_UPPER(x) (x >= 'A' && x <= 'Z')
 # define IS_LOW(x) (x >= 'a' && x <= 'z')
-# define IS_TYPE(x) (x == 's' || x == 'S' || x == 'p' || x == 'd' || x == 'D' || x == 'i' || x == 'o' || x == 'O' || x == 'u' || x == 'U' || x == 'x' || x == 'X' || x == 'c' || x == 'C' || x == 'b' || x == 'f' || x == 'F' || x == 'a' || x == 'A' || x == '%')
+# define IS_TYPE(x) (x == 'R' || x == 'p' || x == 's' || x == 'S' || x == 'p' || x == 'd' || x == 'D' || x == 'i' || x == 'o' || x == 'O' || x == 'u' || x == 'U' || x == 'x' || x == 'X' || x == 'c' || x == 'C' || x == 'b' || x == 'f' || x == 'F' || x == 'a' || x == 'A' || x == '%')
 # define NUMBERS(x) (*x == 'd' || *x == 'D' || *x == 'x' || *x == 'X' || *x == 'b' || *x == 'o' || *x == 'O' || *x == 'u' || *x == 'i')
 # define FLOATS(x) (*x == 'f' || *x == 'F' || *x =='a' || *x == 'A')
 # define isDIGIT(x) (x == '0' || x == '1' || x == '2' || x == '3' || x == '4' || x == '5' || x == '6' || x == '7' || x == '8' || x == '9')
@@ -35,10 +37,10 @@
 # define LL(x) (x[-1] == 'l' && x[-2] == 'l')
 # define is_unsign(x) (*x == 'x' || *x == 'X' || *x == 'o' || *x == 'O' || *x == 'u')
 # define isFLAG(x) (x == '#' || x == '-' || x == '+')
-# define Ox(tree) (hash(tree) && !tree->zero && (tree->c[0] == 'x' || tree->c[0] == 'X'))
+# define Ox(tree) (hash(tree) && !tree->zero && (tree->c[0] == 'x' || tree->c[0] == 'X' || tree->c[0] == 'p'))
 # define O(tree) (tree->c[0] == 'o' || tree->c[0] == 'O')
 # define X(tree) (tree->c[0] == 'x' || tree->c[0] == 'X')
-# define hash(tree) (tree->hash)
+# define hash(tree) (tree->hash && !tree->zero)
 # define SingleSpace(x) (x->c[0] == 'd' && x->space && !x->neg && !x->left && !x->O && !x->X && !x->percent && !x->l && !x->ll && !x->decimal && !x->hash && !x->zero && !x->z_pad && !x->dot && !x->plus && (x->prec == 10000) && (x->width <= 0))
 
 
@@ -46,9 +48,12 @@ typedef struct s_ap t_ap;
 
 struct					s_ap
 {
+	int len;
 	int prec;
 	int width;
 	int ret;
+	uint8_t preast;
+	uint8_t posast;
 	uint8_t left;
 	uint8_t X;
 	uint8_t O;
@@ -71,11 +76,13 @@ struct					s_ap
 };
 
 //width, precision, left align. 
-
-
+void                big_digit(va_list ap, char *format, t_ap *tree);
+void            wchar(va_list ap, char *format, t_ap *tree);
+int 			        bt_putwstr(wchar_t *s, t_ap *tree);
+char					*ft_wpad(wchar_t *s, t_ap *tree);
 int						get_wstr_len(wchar_t *wc);
 void					put_wchar(t_ap *tree, char c);
-void					put_wc(t_ap *tree, wchar_t c);
+int						put_wc(t_ap *tree, wchar_t c);
 int						bt_putchar(char c, int times);
 void					ft_put_wstr_fd_prec(wchar_t *s, int fd, int prec, t_ap *tree);
 char					*ft_spad(char *s, int prec, t_ap *tree);
