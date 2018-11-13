@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/24 18:51:31 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/10/17 12:49:27 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/11 21:52:22 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,24 +14,30 @@
 
 void put_wchar(t_ap *tree, char c)
 {
-	tree->ret += write(1, &c, 1);
+	//tree->ret += 
+	write(1, &c, 1);
 
 }
 
-void put_wc(t_ap *tree, wchar_t c)
+int put_wc(t_ap *tree, wchar_t c)
 {
 	if (c <= 0x7F)
+	{
 		put_wchar(tree, c);
+		return (1);
+	}
 	else if (c <= 0x7FF)
 	{
 		put_wchar(tree, (c >> 6) | 0xC0);
 		put_wchar(tree, (c & 0x3F) | 0x80);
+		return (2);
 	}
 	else if (c <= 0xFFFF)
 	{
 		put_wchar(tree, ((c >> 12) | 0xE0));
 		put_wchar(tree, ((c >> 6) & 0x3F) | 0x80);
 		put_wchar(tree, (c & 0x3F) | 0x80);
+		return (3);
 	}
 	else if (c <= 0x10FFFF)
 	{
@@ -39,6 +45,7 @@ void put_wc(t_ap *tree, wchar_t c)
 		put_wchar(tree, ((c >> 12) & 0x3F) | 0x80);
 		put_wchar(tree, ((c >> 6) & 0x3F) | 0x80);
 		put_wchar(tree, (c & 0x3F) | 0x80);
+		return (4);
 	}
 }
 
@@ -105,27 +112,61 @@ int				bt_strlen(const char *s, t_ap *tree, int prec)
 
 char			*ft_pad(char *s, t_ap *tree)
 {
-	tree->prec = (tree->prec > ft_strlen(s)) ? (tree->prec) : (10000);
+	tree->prec = ((tree->prec > ft_strlen(s)) && (tree->prec > 0))  ? (tree->prec) : (10000);
 	tree->prec -= (tree->prec == 10000) ? (0) : (bt_strlen(s, tree, 1));
 	tree->width -= (tree->prec == 10000) ? (bt_strlen(s, tree, 0))
 		: (tree->prec + bt_strlen(s, tree, 0));
 	tree->width += (!(tree->zero && tree->dot && !tree->z_pad)) ? (0) : (1);
+    tree->width -= (Ox(tree)) ?(2) : (0);
 	(!tree->left && !tree->z_pad) ? (precwidth(tree->width, tree, 0)) : (0);
 	tree->ret += (Ox(tree) && IS_LOW(tree->c[0])) ? (write(1, "0x", 2)) : (0);
 	tree->ret += (Ox(tree) && !IS_LOW(tree->c[0])) ? (write(1, "0X", 2)) : (0);
 	tree->ret += (O(tree) && hash(tree)) ? (write(1, "0", 1)) : (0);
-	tree->ret += (tree->plus && s[0] != '-' && tree->c[0] != 'u')
+	tree->ret += (tree->plus && s[0] != '-' && plus(tree->c[0]))
 	? (write(1, "+", 1)) : (0);
 	tree->ret += (s[0] == '-') ? (write(1, "-", 1)) : (0);
 	s += (s[0] == '-') ? (1) : (0);
 	(tree->z_pad && !tree->left) ? (precwidth(tree->width, tree, 0)) : (0);
 	(tree->prec != 10000) ? (precwidth(tree->prec, tree, 1)) : (0);
 	tree->ret += (SingleSpace(tree)) ? (write(1, " ", 1)) : (0);
-	tree->ret += (!(tree->zero && tree->dot && !tree->z_pad)) ?
+	tree->ret += (!((tree->zero && !O(tree)) && tree->dot && !tree->z_pad)) ?
 		(bt_putstr_fd(s, 1, tree)) : (0);
 	(tree->left) ? (precwidth(tree->width, tree, 0)) : (0);
 	return (s);
 }
+
+//ft_wpad(s, tree)
+char            *ft_wpad(wchar_t *s, t_ap *tree)
+{
+    char        *delet;
+
+	tree->len = ft_wstrlen(s);
+    tree->prec = (tree->prec > tree->len) ? (tree->len) : (tree->prec);
+    tree->width -= (tree->prec == tree->len) ?
+        (tree->len) : (tree->len - tree->prec);
+    tree->ret += (tree->left && !(tree->zero && tree->dot) && thicc(tree->c)) ?
+        (bt_putwstr(s, tree)) : (0);
+    /*tree->ret += (tree->left && !(tree->zero && tree->dot) && tree->c[0] == 'C') ?
+	  (put_wc(tree, *s)) : (0);*/
+    while (tree->width > 0)
+    {
+        tree->ret += (tree->z_pad && !tree->left) ?
+            (write(1, "0", 1)) : (write(1, " ", 1));
+        tree->width--;
+    }
+    while (tree->prec != 10000 && (tree->prec > 0) && NUMBERS(tree->c))
+    {
+        tree->ret += ((tree->c[0] != 'x' && tree->c[0] != 'X') || tree->z_pad) ?
+            (write(1, "0", 1)) : (write(1, " ", 1));
+        tree->prec--;
+    }
+    tree->ret += (!tree->left && !(tree->zero && tree->dot) && thicc(tree->c))
+        ? (bt_putwstr(s, tree)) : (0);
+    /*tree->ret += (!tree->left && !(tree->zero && tree->dot) && tree->c[0] == 'C')
+	  ? (put_wc(tree, *s)) : (0);*/
+    return (s);
+}
+
 
 char			*ft_spad(char *s, int prec, t_ap *tree)
 {
@@ -156,7 +197,7 @@ char			*ft_spad(char *s, int prec, t_ap *tree)
 }
 
 
-int	get_wstr_len(wchar_t *wc)
+int	ft_wstrlen(wchar_t *wc)
 {
 	int i;
 	int len;
@@ -207,7 +248,9 @@ char            *ft_wspad(wchar_t *s, int prec, t_ap *tree)
 
 void			ft_putstr_fd_prec(char *s, int fd, int prec, t_ap *tree)
 {
-	if (FLOATS(tree->c))
+	if (thicc(tree->c))
+		ft_wpad(s, tree);
+	else if (FLOATS(tree->c))
 		ft_pad(ft_strsub(s, 0, prec), tree);
 	else if (NUMBERS(tree->c))
 		ft_pad(s, tree);
