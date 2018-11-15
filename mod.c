@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/24 18:51:31 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/11 21:52:22 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/14 19:52:19 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,19 +117,19 @@ char			*ft_pad(char *s, t_ap *tree)
 	tree->width -= (tree->prec == 10000) ? (bt_strlen(s, tree, 0))
 		: (tree->prec + bt_strlen(s, tree, 0));
 	tree->width += (!(tree->zero && tree->dot && !tree->z_pad)) ? (0) : (1);
-    tree->width -= (Ox(tree)) ?(2) : (0);
+    //tree->width -= (Ox(tree)) ?(2) : (0);
 	(!tree->left && !tree->z_pad) ? (precwidth(tree->width, tree, 0)) : (0);
 	tree->ret += (Ox(tree) && IS_LOW(tree->c[0])) ? (write(1, "0x", 2)) : (0);
 	tree->ret += (Ox(tree) && !IS_LOW(tree->c[0])) ? (write(1, "0X", 2)) : (0);
 	tree->ret += (O(tree) && hash(tree)) ? (write(1, "0", 1)) : (0);
-	tree->ret += (tree->plus && s[0] != '-' && plus(tree->c[0]))
+	tree->ret += (tree->plus && s[0] != '-' && plus(tree))
 	? (write(1, "+", 1)) : (0);
 	tree->ret += (s[0] == '-') ? (write(1, "-", 1)) : (0);
 	s += (s[0] == '-') ? (1) : (0);
 	(tree->z_pad && !tree->left) ? (precwidth(tree->width, tree, 0)) : (0);
 	(tree->prec != 10000) ? (precwidth(tree->prec, tree, 1)) : (0);
 	tree->ret += (SingleSpace(tree)) ? (write(1, " ", 1)) : (0);
-	tree->ret += (!((tree->zero && !O(tree)) && tree->dot && !tree->z_pad)) ?
+	tree->ret += (!((tree->zero && !O(tree) && (tree->prec == 10000)) && tree->dot && !tree->z_pad)) ?
 		(bt_putstr_fd(s, 1, tree)) : (0);
 	(tree->left) ? (precwidth(tree->width, tree, 0)) : (0);
 	return (s);
@@ -173,9 +173,9 @@ char			*ft_spad(char *s, int prec, t_ap *tree)
 	char		*delet;
 
 	tree->prec = (tree->prec > ft_strlen(s)) ? (ft_strlen(s)) : (tree->prec);
-	tree->width -= (tree->prec == ft_strlen(s)) ?
-		(ft_strlen(s)) : (ft_strlen(s) - tree->prec);
-
+	//tree->width -= (tree->prec == ft_strlen(s)) ?
+	//(ft_strlen(s)) : (ft_strlen(s) - tree->prec);
+    tree->width -= tree->prec;//(tree->prec <= ft_strlen(s)) ?  (tree->prec) : (ft_strlen(s)); //test
 	delet = ft_strsub(s, 0, tree->prec);
 	tree->ret += (tree->left && !(tree->zero && tree->dot)) ?
 		(bt_putstr_fd(delet, 1, tree)) : (0);
@@ -217,34 +217,6 @@ int	ft_wstrlen(wchar_t *wc)
 	}
 	return (len);
 }
-/*
-char            *ft_wspad(wchar_t *s, int prec, t_ap *tree)
-{
-    char        *delet;
-
-    tree->prec = (tree->prec > get_wstr_len(s)) ? (get_wstr_len(s)) : (tree->prec);
-    tree->width -= (tree->prec == get_wstr_len(s)) ?
-        (get_wstr_len(s)) : (get_wstr_len(s) - tree->prec);
-
-    delet = ft_strsub(s, 0, tree->prec);
-    tree->ret += (tree->left && !(tree->zero && tree->dot)) ?
-        (bt_putstr_fd(delet, 1, tree)) : (0);
-    while (tree->width > 0)
-    {
-        tree->ret += (tree->z_pad && !tree->left) ?
-            (write(1, "0", 1)) : (write(1, " ", 1));
-        tree->width--;
-    }
-    while (tree->prec != 10000 && (tree->prec > 0) && NUMBERS(tree->c))
-    {
-        tree->ret += ((tree->c[0] != 'x' && tree->c[0] != 'X') || tree->z_pad) ?
-            (write(1, "0", 1)) : (write(1, " ", 1));
-        tree->prec--;
-    }
-    tree->ret += (!tree->left && !(tree->zero && tree->dot))
-        ? (bt_putstr_fd(delet, 1, tree)) : (0);
-    return (s);
-	}*/
 
 void			ft_putstr_fd_prec(char *s, int fd, int prec, t_ap *tree)
 {
@@ -351,19 +323,25 @@ intmax_t			decimals(double holder, float base, t_ap *tree)
 
 void		floot(va_list ap, char *format, t_ap *tree)
 {
-	double	holder;
+	long double	holder;
 	float	base;
 	intmax_t		temp;
+	int prec;
 	if (format[0] == 'f' || format[0] == 'F')
 		base = 10;
 	else
 		base = 16;
-	holder = va_arg(ap, double);
-	temp = precision(format, ap, tree);
+	if (format[-1] == 'L')
+		holder = va_arg(ap, long double);
+	else
+		holder = (long double)va_arg(ap, double);
+	prec = precision(format, ap, tree);
+	tree->prec = 10000;
 	if((tree->prec == 0) && ((((intmax_t)(holder * base) % (intmax_t)base) >= ((intmax_t)base /2)) ||
 							 (((intmax_t)(-1 * holder * base) % (intmax_t)base) >= ((intmax_t)base /2))))
 		holder += (holder > 0) ? (1) : (-1);
 	ft_putstr_fd_prec(ft_maxtoa_base((intmax_t)holder, (intmax_t)base, format), 1, temp, tree);
+	tree->prec = prec;
 	temp = (decimals(holder, base, tree));
 	ft_putstr_fd_prec(ft_maxtoa_base((intmax_t)temp, (intmax_t)base, format), 1, tree->prec, tree);
 }

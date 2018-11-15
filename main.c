@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 15:12:22 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/12 23:01:21 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/14 20:38:56 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,9 @@ int					precision(char *format, va_list ap, t_ap *tree)
 {
 	tree->prec = 10000;
 	tree->width = 0;
-	while (isDIGIT(format[-1]) || format[-1] == '.' || format[-1] == '*')
+	while (isDIGIT(format[-1]) || format[-1] == '.' || format[-1] == '*' || (IS_TYPE(format[-1]) && format[-1] != '%') || format[-1] == 'h' || format[-1] == 'l' || format[-1] == 'L')
 		format--;
 	(format[0] == '*') ? (tree->width = va_arg(ap, int)) : (tree->width = tree->width);
-	//tree->width = (format[0] == '*') ? (va_arg(ap, int)) : (0);
 	tree->left = (tree->width < 0) ? (1) : (tree->left);
 	tree->width = (tree->width < 0) ? (-tree->width) : (tree->width);
 	format += (format[0] == '*') ? (1) : (0);
@@ -28,11 +27,12 @@ int					precision(char *format, va_list ap, t_ap *tree)
 	tree->width = (isDIGIT(format[0])) ? (ft_atoi(&format[0])) : (tree->width);
 	format += (isDIGIT(format[0])) ? (1) : (0);
     (format[0] == '*') ? (tree->width = va_arg(ap, int)) : (tree->width = tree->width);
-	//tree->width = (format[0] == '*') ? (va_arg(ap, int)) : (tree->width);
 	while (tree->dot && format[0] != '.')
 		format++;
 	tree->prec = (format[1] == '*' && tree->dot) ? (va_arg(ap, int))
 		: (tree->prec);
+    tree->prec = (IS_TYPE(format[1]) && tree->dot) ? (0)
+        : (tree->prec);
 	tree->prec = (isDIGIT(format[1]) && tree->dot) ? (ft_atoi(&format[1]))
 		: (tree->prec);
 	tree->width -= (tree->hash && X(tree)) ? (2) : (0);
@@ -52,7 +52,7 @@ void				udigit(va_list ap, char *format, t_ap *tree)
 	if (format[0] == 'O')
 		uholder = (uintmax_t)va_arg(ap, unsigned long);
 	else if (is_unsign(format) && HH(format))
-		uholder = (uintmax_t)va_arg(ap, unsigned char);
+		uholder = (uintmax_t)va_arg(ap, int);//unsigned char);
 	else if (format[-1] == 'h' && is_unsign(format))
 		uholder = (uintmax_t)va_arg(ap, unsigned short);
 	else if (is_unsign(format) && LL(format))
@@ -121,18 +121,21 @@ void                big_digit(va_list ap, char *format, t_ap *tree)
 int			bt_putwstr(wchar_t *s, t_ap *tree)
 {
 	int i = 0;
+	int len = 0;
 
 	if (tree->c[0] == 'c' || tree->c[0] == 'C')
 	{
 		return(put_wc(tree, s[0]));
 		
 	}
-	while (s[i])
+	tree->prec--;
+	while (s[i] && i < tree->prec)
 	{
-		put_wc(tree, s[i]);
+		len += put_wc(tree, s[i]);
 		i++;
 	}
-	return (tree->len);
+	return (len);
+	//return (tree->len);
 }
 
 void			str(va_list ap, char *format, t_ap *tree)
@@ -202,8 +205,6 @@ void			character(va_list ap, char *format, t_ap *tree)
         return ;
     }
 	precision(format, ap, tree);
-	//c = (unsigned char)va_arg(ap, int);
-    //precision(format, ap, tree);
 	tree->width--;
 	tree->ret += ((tree->width > 0) && !tree->left && !tree->z_pad) ?
 		(bt_putchar(' ', tree->width)) : (0);
@@ -372,7 +373,7 @@ int				ft_printf(const char *restrict format, ...)
 		if (format[i] == '%')
 		{
 			i++;
-			while (!IS_TYPE(format[i]) && format[i + 1] != ' ' && format[i + 1] != '}' && format[i] != '\0')
+			while (!IS_TYPE(format[i]) && format[i + 1] != '}' && format[i] != '\0')//format[i + 1] == ' '
 				flags((char*)&format[i++], tree);
 			tree->c = (char*)&format[i];
 			p[format[i]](ap, (char*)&format[i++], tree);
@@ -389,33 +390,19 @@ int main()
 	int ret = 0;
 	int ret2 = 0;
 	char c;
-	unsigned short yeah = USHRT_MAX;
+	long double yeah = 420.420420420;
+	float yes = 420.420420;
+	//unsigned short yeah = USHRT_MAX;
+
 	setlocale(LC_ALL, "");
 		printf("mines: \n");
-		ret = ft_printf("%");
+		ret = ft_printf("%S\\n", L"ݗݜशব");
 		printf("\n");
 		printf("theyres: \n");
-		ret2 = printf("%");
+		ret2 = printf("%S\\n", L"ݗݜशব");
  		printf("\n");
 		printf("myret:%d thers:%d\n", ret, ret2);
 	return(0);
-}
+	}
+*/
 
-
-
-//      int i = 0;
-//      int hold = 0;
-/*      while(1)
-        {
-            if (i > 20)
-                i = 0;
-            hold = i;
-            while (i < 30)
-            {
-                write(1, "  ", 2);
-                i++;
-            }
-            i = hold;
-            i++;
-            write(1, "\U0001f44B", 4);
-            }*/
