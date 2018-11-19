@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 16:24:30 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/12 10:47:51 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/15 12:26:00 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <locale.h>
 # include <limits.h>
 
-# define plus(x) (x != 'o' && x != 'O' && x != 'u')
+# define plus(x) (!O(tree) && x != 'u' && !X(tree)) 
 # define thicc(x) (*x == 'S' || *x == 'C' || (x[-1] == 'l' && (*x == 's')))
 # define baseTEN(x) (x == 'd' || x == 'D' || x == 'u' || x == 'U' || x == 'i')
 # define ExOr(x, y) ((x && !y) || (!x && y))
@@ -29,7 +29,7 @@
 # define IS_UPPER(x) (x >= 'A' && x <= 'Z')
 # define IS_LOW(x) (x >= 'a' && x <= 'z')
 # define IS_TYPE(x) (x == 'R' || x == 'p' || x == 's' || x == 'S' || x == 'p' || x == 'd' || x == 'D' || x == 'i' || x == 'o' || x == 'O' || x == 'u' || x == 'U' || x == 'x' || x == 'X' || x == 'c' || x == 'C' || x == 'b' || x == 'f' || x == 'F' || x == 'a' || x == 'A' || x == '%')
-# define NUMBERS(x) (*x == 'd' || *x == 'D' || *x == 'x' || *x == 'X' || *x == 'b' || *x == 'o' || *x == 'O' || *x == 'u' || *x == 'i')
+# define NUMBERS(x) (*x == 'd' || *x == 'D' || *x == 'x' || *x == 'X' || *x == 'b' || *x == 'o' || *x == 'O' || *x == 'u' || *x == 'i' || *x == 'U')
 # define FLOATS(x) (*x == 'f' || *x == 'F' || *x =='a' || *x == 'A')
 # define isDIGIT(x) (x == '0' || x == '1' || x == '2' || x == '3' || x == '4' || x == '5' || x == '6' || x == '7' || x == '8' || x == '9')
 # define isID(x) (x == 'h' || x == 'l' || x == 'j' || x == 'z')

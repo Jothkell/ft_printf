@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 15:12:22 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/14 20:38:56 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/15 12:54:38 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,6 +163,7 @@ void			str(va_list ap, char *format, t_ap *tree)
 		hold = (char*)malloc(sizeof(char));
 		hold = "R";
 		ft_putstr_fd_prec(hold, 1, prec, tree);
+		free(hold);
 		return ;
 	}
 	hold = va_arg(ap, char*);
@@ -290,6 +291,7 @@ void addy(va_list ap, char *format, t_ap *tree)
 	else
 		hold =ft_maxtoa_base((intmax_t)yeah, 16, format);
 	ft_pad(hold, tree);
+	free(hold);
 }
 
 void non(va_list ap, char *format, t_ap *tree)
@@ -301,6 +303,7 @@ void non(va_list ap, char *format, t_ap *tree)
 	hold = (char*)malloc(sizeof(char));
 	ft_strncpy(hold, tree->c, 1);
 	ft_putstr_fd_prec(hold, 1, prec, tree);
+	free(hold);
 	return ;
 }
 
@@ -363,6 +366,8 @@ int				ft_printf(const char *restrict format, ...)
 	void		(*p[123]) (va_list ap, char *format, t_ap *tree);
 	int			i;
 	t_ap		*tree;
+	int hold;
+
 
 	if (!(tree = (t_ap*)ft_memalloc(sizeof(t_ap) * 3)))
 		return (0);
@@ -382,7 +387,9 @@ int				ft_printf(const char *restrict format, ...)
 		else
 			tree->ret += write(1, &format[i++], 1);
 	va_end(ap);
-	return (tree->ret);
+	hold = tree->ret;
+	free(tree);
+	return (hold);
 }
 /*
 int main()
@@ -402,7 +409,37 @@ int main()
 		ret2 = printf("%S\\n", L"ݗݜशব");
  		printf("\n");
 		printf("myret:%d thers:%d\n", ret, ret2);
+		while(1);
+
+
 	return(0);
-	}
+}
 */
 
+ /*
+int main()
+{
+/*	ft_printf("\n");
+	ft_printf("%d\n", 42);
+	ft_printf("%x\n", 505);
+	ft_printf("%20.15d\n", 54321);
+	ft_printf("%-10d\n", 3);
+	ft_printf("% d\n", 3);
+	ft_printf("%+d\n", 3);
+	ft_printf("%010d\n", 1);
+	ft_printf("%hhd\n", 0);
+	ft_printf("%jd\n", 9223372036854775807);
+	ft_printf("%zd\n", 4294967295);
+	ft_printf("%\n");
+	ft_printf("%U\n", 4294967295);
+	ft_printf("%u\n", 4294967295);
+/*	ft_printf("%o\n", 40);
+	ft_printf("%%#08x\n", 42);
+	ft_printf("%x\n", 1000);
+	ft_printf("%#X\n", 1000);
+	ft_printf("%s\n", NULL);
+	ft_printf("%S\n", L"ݗݜशব");
+	while(1);
+	return (0);
+	}
+*/

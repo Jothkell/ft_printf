@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/24 18:51:31 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/14 19:52:19 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/15 19:22:23 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,8 @@ char			*ft_pad(char *s, t_ap *tree)
 	tree->ret += (!((tree->zero && !O(tree) && (tree->prec == 10000)) && tree->dot && !tree->z_pad)) ?
 		(bt_putstr_fd(s, 1, tree)) : (0);
 	(tree->left) ? (precwidth(tree->width, tree, 0)) : (0);
-	return (s);
+	//free(s);
+	return (NULL);
 }
 
 //ft_wpad(s, tree)
@@ -164,7 +165,8 @@ char            *ft_wpad(wchar_t *s, t_ap *tree)
         ? (bt_putwstr(s, tree)) : (0);
     /*tree->ret += (!tree->left && !(tree->zero && tree->dot) && tree->c[0] == 'C')
 	  ? (put_wc(tree, *s)) : (0);*/
-    return (s);
+	//free(s);
+    return (NULL);
 }
 
 
@@ -193,7 +195,9 @@ char			*ft_spad(char *s, int prec, t_ap *tree)
 	}
 	tree->ret += (!tree->left && !(tree->zero && tree->dot))
 		? (bt_putstr_fd(delet, 1, tree)) : (0);
-	return (s);
+	//free(s);
+	free(delet);
+	return (NULL);
 }
 
 
@@ -220,12 +224,21 @@ int	ft_wstrlen(wchar_t *wc)
 
 void			ft_putstr_fd_prec(char *s, int fd, int prec, t_ap *tree)
 {
+	char *hold;
+	char *hold2;
 	if (thicc(tree->c))
 		ft_wpad(s, tree);
 	else if (FLOATS(tree->c))
-		ft_pad(ft_strsub(s, 0, prec), tree);
+	{
+		ft_pad((hold = ft_strsub(s, 0, prec)), tree);
+		free(hold);
+		free(s);
+	}
 	else if (NUMBERS(tree->c))
+	{
 		ft_pad(s, tree);
+		free(s);
+	}
 	else
 		ft_spad(s, prec, tree);
 }
