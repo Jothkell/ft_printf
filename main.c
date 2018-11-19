@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 15:12:22 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/15 12:54:38 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/19 15:03:52 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void				udigit(va_list ap, char *format, t_ap *tree)
 	else if (is_unsign(format) && HH(format))
 		uholder = (uintmax_t)va_arg(ap, int);//unsigned char);
 	else if (format[-1] == 'h' && is_unsign(format))
-		uholder = (uintmax_t)va_arg(ap, unsigned short);
+		uholder = (uintmax_t)va_arg(ap, int);
 	else if (is_unsign(format) && LL(format))
 		uholder = (uintmax_t)va_arg(ap, unsigned long long);
 	else if ((is_unsign(format) && format[-1] == 'l') || format[0] == 'U' || format[0] == 'D')
@@ -66,24 +66,24 @@ void				udigit(va_list ap, char *format, t_ap *tree)
 	else
 		uholder = (uintmax_t)va_arg(ap, unsigned int);
 	tree->zero = (uholder == 0) ? (1) : (0);
-	ft_putstr_fd_prec(ft_umaxtoa_base(uholder, base, tree->c), 1,
-		precision(format, ap, tree), tree);
+	precision(format, ap, tree);
+	ft_putstr_fd_prec(ft_umaxtoa_base(uholder, base, tree->c), tree);
 }
 
 void				digit(va_list ap, char *format, t_ap *tree)
 {
 	intmax_t		holder;
 	intmax_t		base;
-	int prec = precision(format, ap, tree);
-
+	
+	precision(format, ap, tree);
 	holder = 0;
 	if (!(baseTEN(*format)) || !(base = 10))
 		base = (format[0] == 'x' || format[0] == 'X') ? (16) : (2);
 	base = (format[0] == 'o' || format[0] == 'O') ? (8) : (base);
 	if (HH(format))
-		holder = (intmax_t)va_arg(ap, char);
+		holder = (intmax_t)va_arg(ap, int);//char);
 	else if (format[-1] == 'h')
-		holder = (intmax_t)va_arg(ap, short);
+		holder = (intmax_t)va_arg(ap, int);//short);
 	else if (LL(format))
 		holder = (intmax_t)va_arg(ap, long long);
 	else if (format[-1] == 'l' || format[0] == 'D')
@@ -96,26 +96,24 @@ void				digit(va_list ap, char *format, t_ap *tree)
 		holder = (intmax_t)va_arg(ap, int);
 	tree->neg = (holder < 0) ? (1) : (0);
 	tree->zero = (holder == 0) ? (1) : (0);
-	ft_putstr_fd_prec(ft_maxtoa_base(holder, base, format), 1,
-		prec, tree);
+	ft_putstr_fd_prec(ft_maxtoa_base(holder, base, format), tree);
 }
 
 void                big_digit(va_list ap, char *format, t_ap *tree)
 {
     intmax_t        holder;
     intmax_t        base;
-    int prec = precision(format, ap, tree);
 
+    precision(format, ap, tree);
 	base = 10;
     holder = 0;
     if (format[-1] == 'h')
-        holder = (intmax_t)va_arg(ap, unsigned short);
+        holder = (intmax_t)va_arg(ap, int);//unsigned short);
     else if (format[0] == 'D')
         holder = (intmax_t)va_arg(ap, long);
     tree->neg = (holder < 0) ? (1) : (0);
     tree->zero = (holder == 0) ? (1) : (0);
-    ft_putstr_fd_prec(ft_maxtoa_base(holder, base, format), 1,
-					  prec, tree);
+    ft_putstr_fd_prec(ft_maxtoa_base(holder, base, format), tree);
 }
 
 int			bt_putwstr(wchar_t *s, t_ap *tree)
@@ -125,13 +123,13 @@ int			bt_putwstr(wchar_t *s, t_ap *tree)
 
 	if (tree->c[0] == 'c' || tree->c[0] == 'C')
 	{
-		return(put_wc(tree, s[0]));
+		return(put_wc(s[0]));
 		
 	}
 	tree->prec--;
 	while (s[i] && i < tree->prec)
 	{
-		len += put_wc(tree, s[i]);
+		len += put_wc(s[i]);
 		i++;
 	}
 	return (len);
@@ -141,9 +139,8 @@ int			bt_putwstr(wchar_t *s, t_ap *tree)
 void			str(va_list ap, char *format, t_ap *tree)
 {
 	char		*hold;
-	int len;	
 
-	int prec = precision(format, ap, tree);
+	precision(format, ap, tree);
 	if (thicc(tree->c))
 	{
 		wchar_t *yeah;
@@ -151,18 +148,14 @@ void			str(va_list ap, char *format, t_ap *tree)
 		if (!yeah)
 			tree->ret += write(1, "(null)", 6);
 		else
-		{
-			ft_putstr_fd_prec(yeah, 1, prec, tree);
-			//len = ft_wstrlen(yeah);
-			//bt_putwstr(yeah, len, tree);
-		}
+			ft_wpad(yeah, tree);
 		return ;
 	}
 	if (tree->c[0] == 'R')
 	{
 		hold = (char*)malloc(sizeof(char));
 		hold = "R";
-		ft_putstr_fd_prec(hold, 1, prec, tree);
+		ft_putstr_fd_prec(hold, tree);
 		free(hold);
 		return ;
 	}
@@ -170,16 +163,15 @@ void			str(va_list ap, char *format, t_ap *tree)
 	if (!hold)
 		tree->ret += write(1, "(null)", 6);
 	else
-		ft_putstr_fd_prec(hold, 1, prec, tree);
+		ft_putstr_fd_prec(hold, tree);
 }
 
 void            wchar(va_list ap, char *format, t_ap *tree)
 {
     wchar_t     c;
 
-    int prec = precision(format, ap, tree);
+    precision(format, ap, tree);
     c = va_arg(ap, wchar_t);
-    //precision(format, ap, tree);
     tree->width--;
     tree->ret += ((tree->width > 0) && !tree->left) ?
         (bt_putchar(' ', tree->width)) : (0);
@@ -191,7 +183,7 @@ void            wchar(va_list ap, char *format, t_ap *tree)
     else if (!c)
         tree->ret += 1;
     else
-        ft_putstr_fd_prec(&c, 1, prec, tree);
+        ft_wpad(&c, tree);//ft_putstr_fd_prec(&c, 1, prec, tree);
     tree->ret += ((tree->width > 0) && tree->left) ?
         (bt_putchar(' ', tree->width)) : (0);
 }
@@ -246,8 +238,9 @@ void			percent(va_list ap, char *format, t_ap *tree)
 	}
 }
 
-int		zero_struct(t_ap *tree)
+int		zero_struct(t_ap *tree, int i)
 {
+	i += 0;
 	tree->dot = 0;
 	tree->preast = 0;
 	tree->posast = 0;
@@ -271,6 +264,9 @@ int		zero_struct(t_ap *tree)
 
 void oh(va_list ap, char *format, t_ap *tree)
 {
+	ap += 0;
+	format += 0;
+
 	tree->ret = -1;
 }
 
@@ -302,7 +298,7 @@ void non(va_list ap, char *format, t_ap *tree)
 	prec = precision(format, ap, tree);
 	hold = (char*)malloc(sizeof(char));
 	ft_strncpy(hold, tree->c, 1);
-	ft_putstr_fd_prec(hold, 1, prec, tree);
+	ft_putstr_fd_prec(hold, tree);
 	free(hold);
 	return ;
 }
@@ -344,7 +340,7 @@ int		ass_f(void (**p) (va_list ap, char *format, t_ap *tree), t_ap *tree)
 	p['F'] = floot;
 	p['a'] = floot;
 	p['A'] = floot;
-	return (zero_struct(tree));
+	return (zero_struct(tree, 1));
 }
 
 void			flags(char *c, t_ap *tree)
@@ -381,8 +377,8 @@ int				ft_printf(const char *restrict format, ...)
 			while (!IS_TYPE(format[i]) && format[i + 1] != '}' && format[i] != '\0')//format[i + 1] == ' '
 				flags((char*)&format[i++], tree);
 			tree->c = (char*)&format[i];
-			p[format[i]](ap, (char*)&format[i++], tree);
-			zero_struct(tree);
+			p[(int)format[i]](ap, (char*)&format[i], tree);
+			zero_struct(tree, i++);
 		}
 		else
 			tree->ret += write(1, &format[i++], 1);
@@ -419,7 +415,7 @@ int main()
  /*
 int main()
 {
-/*	ft_printf("\n");
+	ft_printf("\n");
 	ft_printf("%d\n", 42);
 	ft_printf("%x\n", 505);
 	ft_printf("%20.15d\n", 54321);
@@ -433,7 +429,7 @@ int main()
 	ft_printf("%\n");
 	ft_printf("%U\n", 4294967295);
 	ft_printf("%u\n", 4294967295);
-/*	ft_printf("%o\n", 40);
+	ft_printf("%o\n", 40);
 	ft_printf("%%#08x\n", 42);
 	ft_printf("%x\n", 1000);
 	ft_printf("%#X\n", 1000);

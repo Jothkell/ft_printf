@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 16:24:30 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/15 12:26:00 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/19 15:26:43 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <locale.h>
 # include <limits.h>
 
-# define plus(x) (!O(tree) && x != 'u' && !X(tree)) 
+# define plus(x) ((!O(x)) && (x->c[0] != 'u') && (!X(x))) 
 # define thicc(x) (*x == 'S' || *x == 'C' || (x[-1] == 'l' && (*x == 's')))
 # define baseTEN(x) (x == 'd' || x == 'D' || x == 'u' || x == 'U' || x == 'i')
 # define ExOr(x, y) ((x && !y) || (!x && y))
@@ -76,21 +76,23 @@ struct					s_ap
 };
 
 //width, precision, left align. 
-void                big_digit(va_list ap, char *format, t_ap *tree);
-void            wchar(va_list ap, char *format, t_ap *tree);
+int						ft_wstrlen(wchar_t *wc);
+char            		*ft_pad(char *s, t_ap *tree);
+void                	big_digit(va_list ap, char *format, t_ap *tree);
+void            		wchar(va_list ap, char *format, t_ap *tree);
 int 			        bt_putwstr(wchar_t *s, t_ap *tree);
 char					*ft_wpad(wchar_t *s, t_ap *tree);
 int						get_wstr_len(wchar_t *wc);
-void					put_wchar(t_ap *tree, char c);
-int						put_wc(t_ap *tree, wchar_t c);
+void					put_wchar(char c);
+int						put_wc(wchar_t c);
 int						bt_putchar(char c, int times);
-void					ft_put_wstr_fd_prec(wchar_t *s, int fd, int prec, t_ap *tree);
-char					*ft_spad(char *s, int prec, t_ap *tree);
+void					ft_put_wstr_fd_prec(wchar_t *s, int fd, t_ap *tree);
+char					*ft_spad(char *s, t_ap *tree);
 char					*ft_umaxtoa_base(uintmax_t n, uintmax_t base, char *format);
-int						bt_putstr_fd(char const *s, int fd, t_ap *tree);
+int						bt_putstr_fd(char const *s, t_ap *tree);
 void					floot(va_list ap, char *format, t_ap *tree);
 char					*ft_ftoa_base(double n, long long base, char *format);
-void					ft_putstr_fd_prec(char *s, int fd, int prec, t_ap *tree);
+void					ft_putstr_fd_prec(char *s, t_ap *tree);
 int						precision(char *format, va_list ap, t_ap *tree);
 char            		*ft_maxtoa_base(intmax_t n, intmax_t base, char *format);
 int						ass_f(void (**p) (va_list ap, char *format, t_ap *tree), t_ap *tree);
