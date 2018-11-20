@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 15:12:22 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/19 15:03:52 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/19 17:30:59 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -254,7 +254,7 @@ int		zero_struct(t_ap *tree, int i)
 	tree->percent = 0;
 	tree->l = 0;
 	tree->ll = 0;
-	tree->fd = 0;
+	tree->fd = 1;
 	tree->decimal = 0;
 	tree->hash = 0;
 	tree->zero = 0;
@@ -399,18 +399,18 @@ int main()
 
 	setlocale(LC_ALL, "");
 		printf("mines: \n");
-		ret = ft_printf("%S\\n", L"ݗݜशব");
+		ret = ft_printf("%x", 42);
 		printf("\n");
 		printf("theyres: \n");
-		ret2 = printf("%S\\n", L"ݗݜशব");
+		ret2 = printf("%x", 42);
  		printf("\n");
 		printf("myret:%d thers:%d\n", ret, ret2);
-		while(1);
+		//while(1);
 
 
 	return(0);
 }
-*/
+
 
  /*
 int main()

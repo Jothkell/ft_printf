@@ -6,7 +6,7 @@
 #    By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/08/14 21:44:46 by jkellehe          #+#    #+#              #
-#    Updated: 2018/09/19 18:08:08 by jkellehe         ###   ########.fr        #
+#    Updated: 2018/11/19 17:06:41 by jkellehe         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -23,7 +23,7 @@ LIB = libft
 all:  $(NAME)
 
 $(NAME):
-	@gcc -g -c $(SRC) -I$(HEADER)
+	@gcc -c $(SRC) -I$(HEADER)
 	@make -C $(LIB)
 	@ar rc $(NAME) *.o ./libft/*.o
 	@ranlib $(NAME)
