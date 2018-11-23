@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 16:24:30 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/19 15:26:43 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/22 14:54:10 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,11 @@
 # include <stdio.h>
 # include "libft/libft.h"
 # include <locale.h>
-# include <limits.h>
+//# include <limits.h>
 
+# define prec2(format) (format[-1] == 'h' || format[-1] == 'l' || format[-1] == 'L')
+# define prec1(format) ((IS_TYPE(format[-1]) && format[-1] != '%') || format[-1] == '.' || format[-1] == '*' || prec2(format))
+# define udigit1(format) ((is_unsign(format) && format[-1] == 'l') || format[0] == 'U' || format[0] == 'D')
 # define plus(x) ((!O(x)) && (x->c[0] != 'u') && (!X(x))) 
 # define thicc(x) (*x == 'S' || *x == 'C' || (x[-1] == 'l' && (*x == 's')))
 # define baseTEN(x) (x == 'd' || x == 'D' || x == 'u' || x == 'U' || x == 'i')
@@ -42,7 +45,7 @@
 # define X(tree) (tree->c[0] == 'x' || tree->c[0] == 'X')
 # define hash(tree) (tree->hash && !tree->zero)
 # define SingleSpace(x) (x->c[0] == 'd' && x->space && !x->neg && !x->left && !x->O && !x->X && !x->percent && !x->l && !x->ll && !x->decimal && !x->hash && !x->zero && !x->z_pad && !x->dot && !x->plus && (x->prec == 10000) && (x->width <= 0))
-
+# define printf1(format) (!IS_TYPE(format[i]) && format[i + 1] != '}' && format[i] != '\0')
 
 typedef struct s_ap t_ap;
 

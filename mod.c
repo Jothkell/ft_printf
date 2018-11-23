@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/24 18:51:31 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/19 15:25:21 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/22 15:13:10 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,8 +259,6 @@ char			*ft_maxtoa_base(intmax_t n, intmax_t base, char *format)
 	digits = "0123456789ABCDEF";
 	if (IS_LOW(format[0]))
 		digits = "0123456789abcdef";
-	/*if (n == -9223372036854775808 && base == 10)
-	  return ("-9223372036854775808");*/
 	len = count_size(n);
 	tmp = n;
 	if (n < 0 && ++len)
