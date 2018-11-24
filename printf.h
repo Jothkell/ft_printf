@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 16:24:30 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/22 14:54:10 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/23 20:06:12 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,12 @@
 # define X(tree) (tree->c[0] == 'x' || tree->c[0] == 'X')
 # define hash(tree) (tree->hash && !tree->zero)
 # define SingleSpace(x) (x->c[0] == 'd' && x->space && !x->neg && !x->left && !x->O && !x->X && !x->percent && !x->l && !x->ll && !x->decimal && !x->hash && !x->zero && !x->z_pad && !x->dot && !x->plus && (x->prec == 10000) && (x->width <= 0))
-# define printf1(format) (!IS_TYPE(format[i]) && format[i + 1] != '}' && format[i] != '\0')
+# define printf1(format) (!IS_TYPE(format[i]) && format[i + 1] != '}' && format[i] != '\0' && format[i] != 10)
+# define ft_pad1(tree) ((tree->zero && (convzer(tree)) && (tree->prec == 10000)) && tree->dot && !tree->z_pad)
+# define convzer(tree) ((O(tree) && !tree->hash) || X(tree) || (tree->c[0] == 'd'))
+# define ft_pad2(tree) (!(tree->zero && tree->dot && !tree->z_pad) || ft_pad1(tree))
+//(!((tree->zero && !O(tree) && (tree->prec == 10000)) && tree->dot && !tree->z_pad))
+
 
 typedef struct s_ap t_ap;
 
@@ -99,10 +104,10 @@ void					ft_putstr_fd_prec(char *s, t_ap *tree);
 int						precision(char *format, va_list ap, t_ap *tree);
 char            		*ft_maxtoa_base(intmax_t n, intmax_t base, char *format);
 int						ass_f(void (**p) (va_list ap, char *format, t_ap *tree), t_ap *tree);
-void						digit(va_list ap, char *format, t_ap *tree);
+void					digit(va_list ap, char *format, t_ap *tree);
 int						ft_printf(const char * restrict format, ...);
 void					flags(char *c, t_ap *tree);
-intmax_t						decimals(double holder, float base, t_ap *tree);
-
+intmax_t				decimals(double holder, float base, t_ap *tree);
+intmax_t				ft_abs(intmax_t in);
 
 # endif
