@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 15:12:22 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/22 15:22:15 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/24 12:57:01 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ void				udigit(va_list ap, char *format, t_ap *tree)
 {
 	intmax_t		base;
 	uintmax_t		uholder;
+	char			*delet;
 
 	if (!(baseTEN(*format)) || !(base = 10))
 		base = (format[0] == 'x' || format[0] == 'X') ? (16) : (2);
@@ -66,13 +67,15 @@ void				udigit(va_list ap, char *format, t_ap *tree)
 		uholder = (uintmax_t)va_arg(ap, unsigned int);
 	tree->zero = (uholder == 0) ? (1) : (0);
 	precision(format, ap, tree);
-	ft_putstr_fd_prec(ft_umaxtoa_base(uholder, base, tree->c), tree);
+	ft_putstr_fd_prec((delet = ft_umaxtoa_base(uholder, base, tree->c)), tree);
+	//free(delet);
 }
 
 void				digit(va_list ap, char *format, t_ap *tree)
 {
 	intmax_t		holder;
 	intmax_t		base;
+	char *delet;
 
 	precision(format, ap, tree);
 	holder = 0;
@@ -80,9 +83,9 @@ void				digit(va_list ap, char *format, t_ap *tree)
 		base = (format[0] == 'x' || format[0] == 'X') ? (16) : (2);
 	base = (format[0] == 'o' || format[0] == 'O') ? (8) : (base);
 	if (HH(format))
-		holder = (intmax_t)va_arg(ap, int);
+		holder = (intmax_t)(char)va_arg(ap, int);
 	else if (format[-1] == 'h')
-		holder = (intmax_t)va_arg(ap, int);
+		holder = (intmax_t)(short)va_arg(ap, int);
 	else if (LL(format))
 		holder = (intmax_t)va_arg(ap, long long);
 	else if (format[-1] == 'l' || format[0] == 'D')
@@ -95,13 +98,15 @@ void				digit(va_list ap, char *format, t_ap *tree)
 		holder = (intmax_t)va_arg(ap, int);
 	tree->neg = (holder < 0) ? (1) : (0);
 	tree->zero = (holder == 0) ? (1) : (0);
-	ft_putstr_fd_prec(ft_maxtoa_base(holder, base, format), tree);
+	ft_putstr_fd_prec((delet = ft_maxtoa_base(holder, base, format)), tree);
+	free(delet);
 }
 
 void				big_digit(va_list ap, char *format, t_ap *tree)
 {
 	intmax_t		holder;
 	intmax_t		base;
+	char			*delet;
 
 	precision(format, ap, tree);
 	base = 10;
@@ -112,7 +117,8 @@ void				big_digit(va_list ap, char *format, t_ap *tree)
 		holder = (intmax_t)va_arg(ap, long);
 	tree->neg = (holder < 0) ? (1) : (0);
 	tree->zero = (holder == 0) ? (1) : (0);
-	ft_putstr_fd_prec(ft_maxtoa_base(holder, base, format), tree);
+	ft_putstr_fd_prec((delet = ft_maxtoa_base(holder, base, format)), tree);
+	//free(delet);
 }
 
 int			bt_putwstr(wchar_t *s, t_ap *tree)
@@ -153,6 +159,7 @@ void			str(va_list ap, char *format, t_ap *tree)
 		hold = (char*)malloc(sizeof(char));
 		hold = "R";
 		ft_putstr_fd_prec(hold, tree);
+		free(hold);
 		return (free(hold));
 	}
 	hold = va_arg(ap, char*);
@@ -285,9 +292,12 @@ void	non(va_list ap, char *format, t_ap *tree)
 	char	*hold;
 	int		prec;
 
-	prec = precision(format, ap, tree);
-	hold = (char*)malloc(sizeof(char));
-	ft_strncpy(hold, tree->c, 1);
+    prec = precision(format, ap, tree);
+    hold = (char*)malloc(sizeof(char));
+	if(*format == 10)
+		ft_strncpy(hold, format, 1);
+	else
+		ft_strncpy(hold, tree->c, 1);
 	ft_putstr_fd_prec(hold, tree);
 	free(hold);
 	return ;
