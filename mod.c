@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/24 18:51:31 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/23 22:12:07 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/26 19:48:56 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,17 +118,20 @@ char			*ft_pad(char *s, t_ap *tree)
 	tree->width -= (tree->prec == 10000) ? (bt_strlen(s, tree, 0))
 		: (tree->prec + bt_strlen(s, tree, 0));
 	tree->width += (ft_pad2(tree)) ? (0) : (1);
+	tree->width -= (SingleSpace(tree)) ? (1) : (0);
+	tree->ret += (SingleSpace(tree)) ? (write(1, " ", 1)) : (0);
 	(!tree->left && !tree->z_pad) ? (precwidth(tree->width, tree, 0)) : (0);
 	tree->ret += (Ox(tree) && IS_LOW(tree->c[0])) ? (write(1, "0x", 2)) : (0);
 	tree->ret += (Ox(tree) && !IS_LOW(tree->c[0])) ? (write(1, "0X", 2)) : (0);
 	tree->ret += (O(tree) && hash(tree)) ? (write(1, "0", 1)) : (0);
+	tree->prec -= (O(tree) && hash(tree) && tree->prec != 10000) ? (1) : (0);
 	tree->ret += ((tree->plus == 1) && (s[0] != '-') && (plus(tree)))
 	? (write(1, "+", 1)) : (0);
 	tree->ret += (s[0] == '-') ? (write(1, "-", 1)) : (0);
 	s += (s[0] == '-') ? (1) : (0);
 	(tree->z_pad && !tree->left) ? (precwidth(tree->width, tree, 0)) : (0);
+    //tree->ret += (SingleSpace(tree)) ? (write(1, " ", 1)) : (0);
 	(tree->prec != 10000) ? (precwidth(tree->prec, tree, 1)) : (0);
-	tree->ret += (SingleSpace(tree)) ? (write(1, " ", 1)) : (0);
 	tree->ret += (!ft_pad1(tree)) ?
 		(bt_putstr_fd(s, tree)) : (0);
 	(tree->left) ? (precwidth(tree->width, tree, 0)) : (0);
@@ -139,9 +142,9 @@ char			*ft_pad(char *s, t_ap *tree)
 char            *ft_wpad(wchar_t *s, t_ap *tree)
 {
 	tree->len = ft_wstrlen(s);
-    tree->prec = (tree->prec > tree->len) ? (tree->len) : (tree->prec);
-    tree->width -= (tree->prec == tree->len) ?
-        (tree->len) : (tree->len - tree->prec);
+    tree->prec = ((tree->prec > tree->len) && tree->prec != 10000) ? (tree->len) : (tree->prec);
+    tree->width -= (tree->prec >= tree->len) ?
+        (tree->len) : (tree->prec);
     tree->ret += (tree->left && !(tree->zero && tree->dot) && thicc(tree->c)) ?
         (bt_putwstr(s, tree)) : (0);
     while (tree->width > 0)
@@ -159,7 +162,8 @@ char            *ft_wpad(wchar_t *s, t_ap *tree)
     tree->ret += (!tree->left && !(tree->zero && tree->dot) && thicc(tree->c))
         ? (bt_putwstr(s, tree)) : (0);
     return (NULL);
-}
+	}
+
 
 
 char			*ft_spad(char *s, t_ap *tree)
@@ -167,7 +171,8 @@ char			*ft_spad(char *s, t_ap *tree)
 	char		*delet;
 
 	tree->prec = (tree->prec > (int)ft_strlen(s)) ? (ft_strlen(s)) : (tree->prec);
-    tree->width -= tree->prec;
+	tree->prec = (tree->prec < 0) ? (10000) : (tree->prec);
+    tree->width -= (tree->prec > 0) ? (tree->prec) : (0);
 	delet = ft_strsub(s, 0, tree->prec);
 	tree->ret += (tree->left && !(tree->zero && tree->dot)) ?
 		(bt_putstr_fd(delet, tree)) : (0);
@@ -185,7 +190,6 @@ char			*ft_spad(char *s, t_ap *tree)
 	}
 	tree->ret += (!tree->left && !(tree->zero && tree->dot))
 		? (bt_putstr_fd(delet, tree)) : (0);
-	//free(s);
 	free(delet);
 	return (NULL);
 }
@@ -222,6 +226,7 @@ void			ft_putstr_fd_prec(char *s, t_ap *tree)
 	{
 		ft_pad((hold = ft_strsub(s, 0, tree->prec)), tree);
 		free(hold);
+		//free(s);
 	}
 	else if (NUMBERS(tree->c))
 	{
@@ -230,20 +235,8 @@ void			ft_putstr_fd_prec(char *s, t_ap *tree)
 	}
 	else
 		ft_spad(s, tree);
+	//free(s);
 }
-/*
-void			ft_put_wstr_fd_prec(wchar_t *s, int prec, t_ap *tree)
-{
-	int			i;
-
-	i = 0;
-	if (FLOATS(tree->c))
-		i+=1;
-	else if (NUMBERS(tree->c))
-		i++;
-	else
-		i++;
-		}*/
 
 intmax_t		ft_abs(intmax_t in)
 {

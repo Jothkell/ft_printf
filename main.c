@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 15:12:22 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/24 12:57:01 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/26 20:04:04 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int					precision(char *format, va_list ap, t_ap *tree)
 		: (tree->prec);
 	tree->prec = (isDIGIT(format[1]) && tree->dot) ? (ft_atoi(&format[1]))
 		: (tree->prec);
-	tree->width -= (tree->hash && X(tree)) ? (2) : (0);
+	tree->width -= ((tree->hash && X(tree)) || tree->c[0] == 'p') ? (2) : (0);
 	tree->width -= ((O(tree) && tree->hash)) ? (1) : (0);
 	return (tree->prec);
 }
@@ -52,9 +52,9 @@ void				udigit(va_list ap, char *format, t_ap *tree)
 	if (format[0] == 'O')
 		uholder = (uintmax_t)va_arg(ap, unsigned long);
 	else if (is_unsign(format) && HH(format))
-		uholder = (uintmax_t)va_arg(ap, int);
+		uholder = (uintmax_t)(unsigned char)va_arg(ap, int);
 	else if (format[-1] == 'h' && is_unsign(format))
-		uholder = (uintmax_t)va_arg(ap, int);
+		uholder = (uintmax_t)(unsigned short)va_arg(ap, int);
 	else if (is_unsign(format) && LL(format))
 		uholder = (uintmax_t)va_arg(ap, unsigned long long);
 	else if (udigit1(format))
@@ -68,7 +68,7 @@ void				udigit(va_list ap, char *format, t_ap *tree)
 	tree->zero = (uholder == 0) ? (1) : (0);
 	precision(format, ap, tree);
 	ft_putstr_fd_prec((delet = ft_umaxtoa_base(uholder, base, tree->c)), tree);
-	//free(delet);
+	free(delet);  //this is all the leaks somehow
 }
 
 void				digit(va_list ap, char *format, t_ap *tree)
@@ -118,7 +118,7 @@ void				big_digit(va_list ap, char *format, t_ap *tree)
 	tree->neg = (holder < 0) ? (1) : (0);
 	tree->zero = (holder == 0) ? (1) : (0);
 	ft_putstr_fd_prec((delet = ft_maxtoa_base(holder, base, format)), tree);
-	//free(delet);
+	free(delet);
 }
 
 int			bt_putwstr(wchar_t *s, t_ap *tree)
@@ -130,8 +130,7 @@ int			bt_putwstr(wchar_t *s, t_ap *tree)
 	len = 0;
 	if (tree->c[0] == 'c' || tree->c[0] == 'C')
 		return (put_wc(s[0]));
-	tree->prec--;
-	while (s[i] && i < tree->prec)
+	while (s[i] && i < tree->prec && len < tree->prec)
 	{
 		len += put_wc(s[i]);
 		i++;
@@ -148,23 +147,19 @@ void			str(va_list ap, char *format, t_ap *tree)
 	if (thicc(tree->c))
 	{
 		yeah = va_arg(ap, wchar_t*);
-		if (!yeah)
+		if (!yeah && !tree->z_pad)
 			tree->ret += write(1, "(null)", 6);
+		else if (!yeah)
+			ft_wpad("\0", tree);
 		else
 			ft_wpad(yeah, tree);
 		return ;
 	}
-	if (tree->c[0] == 'R')
-	{
-		hold = (char*)malloc(sizeof(char));
-		hold = "R";
-		ft_putstr_fd_prec(hold, tree);
-		free(hold);
-		return (free(hold));
-	}
 	hold = va_arg(ap, char*);
-	if (!hold)
+	if (!hold && !tree->z_pad)
 		tree->ret += write(1, "(null)", 6);
+	else if (!hold)
+		ft_putstr_fd_prec("\0", tree);
 	else
 		ft_putstr_fd_prec(hold, tree);
 }
@@ -178,15 +173,7 @@ void			wchar(va_list ap, char *format, t_ap *tree)
 	tree->width--;
 	tree->ret += ((tree->width > 0) && !tree->left) ?
 		(bt_putchar(' ', tree->width)) : (0);
-	if (!c && !tree->dot && (tree->ret == 0) && !tree->width)
-	{
-		write(1, "^@", 2);
-		tree->ret += 1;
-	}
-	else if (!c)
-		tree->ret += 1;
-	else
-		ft_wpad(&c, tree);
+	ft_wpad(&c, tree);
 	tree->ret += ((tree->width > 0) && tree->left) ?
 		(bt_putchar(' ', tree->width)) : (0);
 }
@@ -205,15 +192,10 @@ void			character(va_list ap, char *format, t_ap *tree)
 		(bt_putchar(' ', tree->width)) : (0);
 	tree->ret += ((tree->width > 0) && !tree->left && tree->z_pad) ?
 		(bt_putchar('0', tree->width)) : (0);
-	c = (unsigned char)va_arg(ap, int);
-	if (!c && !tree->dot && (tree->ret == 0) && !tree->width)
-		tree->ret += (write(1, "^@", 2) - 1);
-	else if (!c)
-		tree->ret += 1;
-	else
-		tree->ret += write(1, &c, 1);
+	c = (char)va_arg(ap, int);
+	tree->ret += write(1, &c, 1);
 	tree->ret += ((tree->width > 0) && tree->left && !tree->z_pad) ?
-		(bt_putchar(' ', tree->width)) : (0);
+	(bt_putchar(' ', tree->width)) : (0);
 	tree->ret += ((tree->width > 0) && tree->left && tree->z_pad) ?
 		(bt_putchar('0', tree->width)) : (0);
 }
@@ -275,11 +257,13 @@ void	addy(va_list ap, char *format, t_ap *tree)
 
 	precision(format, ap, tree);
 	yeah = va_arg(ap, char*);
+	tree->zero = (yeah == NULL) ? (1) : (0);
 	tree->hash = 1;
 	if (!yeah)
 	{
-		hold = (char*)malloc(sizeof(char));
-		hold[0] = '\0';
+		hold = (char*)malloc(sizeof(char) * 2);
+		hold[0] = '0';
+		hold[1] = '\0';
 	}
 	else
 		hold = ft_maxtoa_base((intmax_t)yeah, 16, format);
@@ -294,7 +278,7 @@ void	non(va_list ap, char *format, t_ap *tree)
 
     prec = precision(format, ap, tree);
     hold = (char*)malloc(sizeof(char));
-	if(*format == 10)
+	if (*format == 10)
 		ft_strncpy(hold, format, 1);
 	else
 		ft_strncpy(hold, tree->c, 1);
@@ -309,7 +293,7 @@ void	nullify(void (**p) (va_list ap, char *format, t_ap *tree), t_ap *tree)
 
 	i = 0;
 	tree->ret = 0;
-	while (i <= 122)
+	while (i <= 126)
 	{
 		p[i] = non;
 		i++;
@@ -319,7 +303,6 @@ void	nullify(void (**p) (va_list ap, char *format, t_ap *tree), t_ap *tree)
 int		ass_f(void (**p) (va_list ap, char *format, t_ap *tree), t_ap *tree)
 {
 	nullify(p, tree);
-	p['R'] = str;
 	p['p'] = addy;
 	p['U'] = udigit;
 	p['u'] = udigit;
@@ -341,6 +324,7 @@ int		ass_f(void (**p) (va_list ap, char *format, t_ap *tree), t_ap *tree)
 	p['F'] = floot;
 	p['a'] = floot;
 	p['A'] = floot;
+	p['}'] = non;
 	return (zero_struct(tree, 1));
 }
 
@@ -360,7 +344,7 @@ void			flags(char *c, t_ap *tree)
 int				ft_printf(const char *restrict format, ...)
 {
 	va_list		ap;
-	void		(*p[123]) (va_list ap, char *format, t_ap *tree);
+	void		(*p[126]) (va_list ap, char *format, t_ap *tree);
 	int			i;
 	t_ap		*tree;
 

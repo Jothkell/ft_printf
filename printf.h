@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 16:24:30 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/23 20:06:12 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/26 19:42:39 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,13 @@
 # include <stdio.h>
 # include "libft/libft.h"
 # include <locale.h>
-//# include <limits.h>
+# include <limits.h>
 
 # define prec2(format) (format[-1] == 'h' || format[-1] == 'l' || format[-1] == 'L')
 # define prec1(format) ((IS_TYPE(format[-1]) && format[-1] != '%') || format[-1] == '.' || format[-1] == '*' || prec2(format))
 # define udigit1(format) ((is_unsign(format) && format[-1] == 'l') || format[0] == 'U' || format[0] == 'D')
-# define plus(x) ((!O(x)) && (x->c[0] != 'u') && (!X(x))) 
-# define thicc(x) (*x == 'S' || *x == 'C' || (x[-1] == 'l' && (*x == 's')))
+# define plus(x) ((!O(x)) && (x->c[0] != 'u') && (!X(x)) && x->c[0] != 'p') 
+# define thicc(x) (*x == 'S' || *x == 'C' || (x[-1] == 'l' && (*x == 's' || *x == 'c')))
 # define baseTEN(x) (x == 'd' || x == 'D' || x == 'u' || x == 'U' || x == 'i')
 # define ExOr(x, y) ((x && !y) || (!x && y))
 # define INPUTS(x) (IS_TYPE(x) || isDIGIT(x) || isID(x) || isFLAG(x))
@@ -40,14 +40,14 @@
 # define LL(x) (x[-1] == 'l' && x[-2] == 'l')
 # define is_unsign(x) (*x == 'x' || *x == 'X' || *x == 'o' || *x == 'O' || *x == 'u')
 # define isFLAG(x) (x == '#' || x == '-' || x == '+')
-# define Ox(tree) (hash(tree) && !tree->zero && (tree->c[0] == 'x' || tree->c[0] == 'X' || tree->c[0] == 'p'))
+# define Ox(tree) (hash(tree) && (!tree->zero || tree->c[0] == 'p') && (tree->c[0] == 'x' || tree->c[0] == 'X' || tree->c[0] == 'p'))
 # define O(tree) (tree->c[0] == 'o' || tree->c[0] == 'O')
 # define X(tree) (tree->c[0] == 'x' || tree->c[0] == 'X')
-# define hash(tree) (tree->hash && !tree->zero)
-# define SingleSpace(x) (x->c[0] == 'd' && x->space && !x->neg && !x->left && !x->O && !x->X && !x->percent && !x->l && !x->ll && !x->decimal && !x->hash && !x->zero && !x->z_pad && !x->dot && !x->plus && (x->prec == 10000) && (x->width <= 0))
-# define printf1(format) (!IS_TYPE(format[i]) && format[i + 1] != '}' && format[i] != '\0' && format[i] != 10)
+# define hash(tree) (tree->hash && (!tree->zero || tree->c[0] == 'p'))
+# define SingleSpace(x) ((x->c[0] == 'd' || x->c[0] == 'i') && x->space && !x->neg && !x->left && !x->percent && !x->l && !x->ll && !x->decimal && !x->hash && !x->plus)/* && ((!x->zero || x->width > 0) && (!x->z_pad || x->width > 0) && !x->dot && !x->plus && (x->prec == 10000))) //&& (x->width <= 0))*/
+# define printf1(format) (!IS_TYPE(format[i]) && format[i + 1] != '}' && format[i] != '}' && format[i] != '\0' && format[i] != 10)
+# define convzer(tree) ((O(tree) && !tree->hash) || X(tree) || tree->c[0] == 'd' || tree->c[0] == 'i' || tree->c[0] == 'u' || tree->c[0] == 'p')
 # define ft_pad1(tree) ((tree->zero && (convzer(tree)) && (tree->prec == 10000)) && tree->dot && !tree->z_pad)
-# define convzer(tree) ((O(tree) && !tree->hash) || X(tree) || (tree->c[0] == 'd'))
 # define ft_pad2(tree) (!(tree->zero && tree->dot && !tree->z_pad) || ft_pad1(tree))
 //(!((tree->zero && !O(tree) && (tree->prec == 10000)) && tree->dot && !tree->z_pad))
 
