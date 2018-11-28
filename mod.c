@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/24 18:51:31 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/27 17:35:49 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/27 18:59:22 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -257,13 +257,40 @@ intmax_t		ft_abs(intmax_t in)
 	return (in);
 }
 
-char			*ft_maxtoa_base(intmax_t n, intmax_t base, char *format)
+char            *ft_maxtoa_base(intmax_t n, intmax_t base, char *format)
 {
-	char		*str;
+    char        *str;
+    int         len;
+    intmax_t    tmp;
+    char        *digits;
+    char        *hold;
+
+    digits = "0123456789ABCDEF";
+    if (IS_LOW(format[0]))
+        digits = "0123456789abcdef";
+    len = count_size(n);
+    tmp = n;
+    if (n < 0 && ++len)
+        tmp *= -1;
+    if (!(str = ft_strnew(len)))
+        return (NULL);
+    str[--len] = digits[ft_abs(tmp % base)];
+    while ((tmp = tmp / base))
+        str[--len] = digits[ft_abs(tmp % base)];
+    if (n < 0)
+        str[--len] = '-';
+    hold = ft_strdup(&str[len]);
+    free(str);
+    return (hold);
+	}
+/*
+char			*ft_maxtoa_base(intmax_t n, intmax_t base, char *format, t_ap *tree)
+{
+	char		str[70];
 	int			len;
 	intmax_t	tmp;
 	char		*digits;
-	char		*hold;
+	//char		*hold;
 
 	digits = "0123456789ABCDEF";
 	if (IS_LOW(format[0]))
@@ -272,17 +299,21 @@ char			*ft_maxtoa_base(intmax_t n, intmax_t base, char *format)
 	tmp = n;
 	if (n < 0 && ++len)
 		tmp *= -1;
-	if (!(str = ft_strnew(len)))
-		return (NULL);
+	//if (!(str = ft_strnew(len)))
+		//return (NULL);
+	str[len] = '\0';
 	str[--len] = digits[ft_abs(tmp % base)];
 	while ((tmp = tmp / base))
 		str[--len] = digits[ft_abs(tmp % base)];
 	if (n < 0)
 		str[--len] = '-';
-	hold = ft_strdup(&str[len]);
-	free(str);
-	return (hold);
-}
+	//hold = ft_strdup(&str[len]);
+	//free(str);
+	ft_putstr_fd_prec(&str[len], tree);
+	return (NULL);
+}*/
+
+
 
 char            *ft_umaxtoa_base(uintmax_t n, uintmax_t base, char *format, t_ap *tree)
 {
@@ -375,7 +406,9 @@ void		floot(va_list ap, char *format, t_ap *tree)
 							 (((intmax_t)(-1 * holder * base) % (intmax_t)base) >= ((intmax_t)base /2))))
 		holder += (holder > 0) ? (1) : (-1);
 	ft_putstr_fd_prec(ft_maxtoa_base((intmax_t)holder, (intmax_t)base, format), tree);
+	//ft_maxtoa_base((intmax_t)holder, (intmax_t)base, format, tree);
 	tree->prec = prec;
 	temp = (decimals(holder, base, tree));
 	ft_putstr_fd_prec(ft_maxtoa_base((intmax_t)temp, (intmax_t)base, format), tree);
+	//ft_maxtoa_base((intmax_t)temp, (intmax_t)base, format, tree);
 }

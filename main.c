@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 15:12:22 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/27 16:33:24 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/27 18:58:22 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ void				udigit(va_list ap, char *format, t_ap *tree)
 {
 	intmax_t		base;
 	uintmax_t		uholder;
-	//char			*delet;
 
 	if (!(baseTEN(*format)) || !(base = 10))
 		base = (format[0] == 'x' || format[0] == 'X') ? (16) : (2);
@@ -68,8 +67,6 @@ void				udigit(va_list ap, char *format, t_ap *tree)
 	tree->zero = (uholder == 0) ? (1) : (0);
 	precision(format, ap, tree);
 	ft_umaxtoa_base(uholder, base, tree->c, tree);
-	//ft_putstr_fd_prec((delet = ft_umaxtoa_base(uholder, base, tree->c)), tree);
-	//free(delet);  //this is all the leaks somehow
 }
 
 void				digit(va_list ap, char *format, t_ap *tree)
@@ -99,6 +96,7 @@ void				digit(va_list ap, char *format, t_ap *tree)
 		holder = (intmax_t)va_arg(ap, int);
 	tree->neg = (holder < 0) ? (1) : (0);
 	tree->zero = (holder == 0) ? (1) : (0);
+	//ft_maxtoa_base(holder, base, format, tree);
 	ft_putstr_fd_prec((delet = ft_maxtoa_base(holder, base, format)), tree);
 	free(delet);
 }
@@ -118,6 +116,7 @@ void				big_digit(va_list ap, char *format, t_ap *tree)
 		holder = (intmax_t)va_arg(ap, long);
 	tree->neg = (holder < 0) ? (1) : (0);
 	tree->zero = (holder == 0) ? (1) : (0);
+	//ft_maxtoa_base(holder, base, format, tree);
 	ft_putstr_fd_prec((delet = ft_maxtoa_base(holder, base, format)), tree);
 	free(delet);
 }
@@ -265,6 +264,8 @@ void	addy(va_list ap, char *format, t_ap *tree)
 		hold = (char*)malloc(sizeof(char) * 2);
 		hold[0] = '0';
 		hold[1] = '\0';
+		//ft_pad(hold, tree);
+		//free(hold);
 	}
 	else
 		hold = ft_maxtoa_base((intmax_t)yeah, 16, format);
@@ -360,7 +361,7 @@ int				ft_printf(const char *restrict format, ...)
 		return (0);
 	i = ass_f(p, tree);
 	va_start(ap, format);
-	while (format[i] != '\0')//(format[(i - 1)] != '\0' && tree->percent))
+	while (format[i] != '\0')
 		if (format[i] == '%')
 		{
 			i++;
