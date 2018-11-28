@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/24 18:51:31 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/27 15:02:52 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/27 17:35:49 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ int				bt_strlen(const char *s, t_ap *tree, int prec)
 
 char			*ft_pad(char *s, t_ap *tree)
 {
-	tree->prec = ((tree->prec > (int)ft_strlen(s)) && (tree->prec > 0))  ? (tree->prec) : (10000);
+	tree->prec = ((tree->prec >= (int)ft_strlen(s)) && (tree->prec > 0))  ? (tree->prec) : (10000);
 	tree->prec -= (tree->prec == 10000) ? (0) : (bt_strlen(s, tree, 1));
 	tree->width -= (tree->prec == 10000) ? (bt_strlen(s, tree, 0))
 		: (tree->prec + bt_strlen(s, tree, 0));
@@ -141,7 +141,6 @@ char			*ft_pad(char *s, t_ap *tree)
 	tree->ret += (s[0] == '-') ? (write(1, "-", 1)) : (0);
 	s += (s[0] == '-') ? (1) : (0);
 	(tree->z_pad && !tree->left) ? (precwidth(tree->width, tree, 0)) : (0);
-    //tree->ret += (SingleSpace(tree)) ? (write(1, " ", 1)) : (0);
 	(tree->prec != 10000) ? (precwidth(tree->prec, tree, 1)) : (0);
 	tree->ret += (!ft_pad1(tree)) ?
 		(bt_putstr_fd(s, tree)) : (0);
