@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/24 18:51:31 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/26 19:48:56 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/27 15:02:52 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,20 @@ int				bt_putstr_fd(char const *s, t_ap *tree)
 	return (ret);
 }
 
-static int		count_size(intmax_t	n)
+
+int      		count_usize(uintmax_t n)
 {
-	size_t		i;
+    int     i;
+
+    i = 1;
+    while (n /= 2)
+        i++;
+    return (i);
+}
+
+int				count_size(intmax_t	n)
+{
+	int		i;
 
 	i = 1;
 	while (n /= 2)
@@ -274,6 +285,28 @@ char			*ft_maxtoa_base(intmax_t n, intmax_t base, char *format)
 	return (hold);
 }
 
+char            *ft_umaxtoa_base(uintmax_t n, uintmax_t base, char *format, t_ap *tree)
+{
+    char        str[70];
+    int         len;
+    uintmax_t   tmp;
+    char        *digits;
+    //char        hold[70];
+
+    digits = "0123456789ABCDEF";
+    if (IS_LOW(format[0]))
+        digits = "0123456789abcdef";
+    len = count_usize(n);
+    tmp = n;
+	str[len--] = '\0';
+    str[len] = digits[tmp % base];
+    while ((tmp = tmp / base))
+        str[--len] = digits[(tmp % base)];
+	ft_putstr_fd_prec(&str[len], tree);
+    return (NULL);
+}
+
+/*
 char			*ft_umaxtoa_base(uintmax_t n, uintmax_t base, char *format)
 {
 	char		*str;
@@ -295,7 +328,7 @@ char			*ft_umaxtoa_base(uintmax_t n, uintmax_t base, char *format)
 	hold = ft_strdup(&str[len]);
 	free(str);
 	return (hold);
-}
+	}*/
 
 intmax_t			decimals(double holder, float base, t_ap *tree)
 {

@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 16:24:30 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/26 19:42:39 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/27 16:25:16 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,8 @@
 # define X(tree) (tree->c[0] == 'x' || tree->c[0] == 'X')
 # define hash(tree) (tree->hash && (!tree->zero || tree->c[0] == 'p'))
 # define SingleSpace(x) ((x->c[0] == 'd' || x->c[0] == 'i') && x->space && !x->neg && !x->left && !x->percent && !x->l && !x->ll && !x->decimal && !x->hash && !x->plus)/* && ((!x->zero || x->width > 0) && (!x->z_pad || x->width > 0) && !x->dot && !x->plus && (x->prec == 10000))) //&& (x->width <= 0))*/
-# define printf1(format) (!IS_TYPE(format[i]) && format[i + 1] != '}' && format[i] != '}' && format[i] != '\0' && format[i] != 10)
+# define printf1(format) (!IS_TYPE(format[i]) && format[i + 1] != '}' && format[i] != '}' && format[(i + 1)] != '\0' && format[i] != '\0' && format[(i - 1)] != '\0' && format[i] != 10)
+# define printf2(format) (format[i] == '\0' && format[(i -1)] == '%')
 # define convzer(tree) ((O(tree) && !tree->hash) || X(tree) || tree->c[0] == 'd' || tree->c[0] == 'i' || tree->c[0] == 'u' || tree->c[0] == 'p')
 # define ft_pad1(tree) ((tree->zero && (convzer(tree)) && (tree->prec == 10000)) && tree->dot && !tree->z_pad)
 # define ft_pad2(tree) (!(tree->zero && tree->dot && !tree->z_pad) || ft_pad1(tree))
@@ -84,6 +85,7 @@ struct					s_ap
 };
 
 //width, precision, left align. 
+int						count_usize(uintmax_t n);
 int						ft_wstrlen(wchar_t *wc);
 char            		*ft_pad(char *s, t_ap *tree);
 void                	big_digit(va_list ap, char *format, t_ap *tree);
@@ -96,7 +98,7 @@ int						put_wc(wchar_t c);
 int						bt_putchar(char c, int times);
 void					ft_put_wstr_fd_prec(wchar_t *s, int fd, t_ap *tree);
 char					*ft_spad(char *s, t_ap *tree);
-char					*ft_umaxtoa_base(uintmax_t n, uintmax_t base, char *format);
+char					*ft_umaxtoa_base(uintmax_t n, uintmax_t base, char *format, t_ap *tree);
 int						bt_putstr_fd(char const *s, t_ap *tree);
 void					floot(va_list ap, char *format, t_ap *tree);
 char					*ft_ftoa_base(double n, long long base, char *format);

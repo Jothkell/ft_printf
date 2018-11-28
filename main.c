@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/22 15:12:22 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/26 20:04:04 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/27 16:33:24 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void				udigit(va_list ap, char *format, t_ap *tree)
 {
 	intmax_t		base;
 	uintmax_t		uholder;
-	char			*delet;
+	//char			*delet;
 
 	if (!(baseTEN(*format)) || !(base = 10))
 		base = (format[0] == 'x' || format[0] == 'X') ? (16) : (2);
@@ -67,8 +67,9 @@ void				udigit(va_list ap, char *format, t_ap *tree)
 		uholder = (uintmax_t)va_arg(ap, unsigned int);
 	tree->zero = (uholder == 0) ? (1) : (0);
 	precision(format, ap, tree);
-	ft_putstr_fd_prec((delet = ft_umaxtoa_base(uholder, base, tree->c)), tree);
-	free(delet);  //this is all the leaks somehow
+	ft_umaxtoa_base(uholder, base, tree->c, tree);
+	//ft_putstr_fd_prec((delet = ft_umaxtoa_base(uholder, base, tree->c)), tree);
+	//free(delet);  //this is all the leaks somehow
 }
 
 void				digit(va_list ap, char *format, t_ap *tree)
@@ -150,7 +151,7 @@ void			str(va_list ap, char *format, t_ap *tree)
 		if (!yeah && !tree->z_pad)
 			tree->ret += write(1, "(null)", 6);
 		else if (!yeah)
-			ft_wpad("\0", tree);
+			ft_wpad((wchar_t*)"\0", tree);
 		else
 			ft_wpad(yeah, tree);
 		return ;
@@ -219,7 +220,7 @@ void			percent(va_list ap, char *format, t_ap *tree)
 	}
 }
 
-int		zero_struct(t_ap *tree, int i)
+int		zs(t_ap *tree, int i)
 {
 	i += 0;
 	tree->dot = 0;
@@ -278,11 +279,18 @@ void	non(va_list ap, char *format, t_ap *tree)
 
     prec = precision(format, ap, tree);
     hold = (char*)malloc(sizeof(char));
-	if (*format == 10)
+	if(*format == 0 && format[-1] == '%')
+		hold += 0;
+	else if (*format == 10)
+	{
 		ft_strncpy(hold, format, 1);
+		ft_putstr_fd_prec(hold, tree);
+	}
 	else
+	{
 		ft_strncpy(hold, tree->c, 1);
-	ft_putstr_fd_prec(hold, tree);
+		ft_putstr_fd_prec(hold, tree);
+	}
 	free(hold);
 	return ;
 }
@@ -325,7 +333,7 @@ int		ass_f(void (**p) (va_list ap, char *format, t_ap *tree), t_ap *tree)
 	p['a'] = floot;
 	p['A'] = floot;
 	p['}'] = non;
-	return (zero_struct(tree, 1));
+	return (zs(tree, 1));
 }
 
 void			flags(char *c, t_ap *tree)
@@ -352,7 +360,7 @@ int				ft_printf(const char *restrict format, ...)
 		return (0);
 	i = ass_f(p, tree);
 	va_start(ap, format);
-	while (format[i] != '\0')
+	while (format[i] != '\0')//(format[(i - 1)] != '\0' && tree->percent))
 		if (format[i] == '%')
 		{
 			i++;
@@ -360,7 +368,7 @@ int				ft_printf(const char *restrict format, ...)
 				flags((char*)&format[i++], tree);
 			tree->c = (char*)&format[i];
 			p[(int)format[i]](ap, (char*)&format[i], tree);
-			zero_struct(tree, i++);
+			i += (printf2(format)) ? (zs(tree, i)) : ((zs(tree, i) + 1));
 		}
 		else
 			tree->ret += write(1, &format[i++], 1);
