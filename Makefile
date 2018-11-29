@@ -6,13 +6,13 @@
 #    By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/08/14 21:44:46 by jkellehe          #+#    #+#              #
-#    Updated: 2018/11/19 17:06:41 by jkellehe         ###   ########.fr        #
+#    Updated: 2018/11/27 19:18:25 by jkellehe         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
 NAME = libftprintf.a
 
-SRC = main.c mod.c
+SRC = *.c
 
 HEADER = printf.h
 
