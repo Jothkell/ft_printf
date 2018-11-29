@@ -6,7 +6,7 @@
 /*   By: jkellehe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/27 19:36:01 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/29 14:08:32 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/29 14:42:42 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,11 +76,10 @@ intmax_t		decimals(double holder, float base, t_ap *tree)
 		i--;
 	}
 	tip = (int)holder;
-	//tip *= (tip < 0) ? (-1) : (1);
 	holder *= (holder < 0) ? (-1) : (1);
 	if (((int)(holder * base) % (int)base) >= ((int)base / 2))
 	{
-		if(tip == 0)
+		if (tip == 0)
 			tree->rd = 1;
 		else
 			tip += (tip > 0) ? (1) : (-1);
@@ -102,17 +101,16 @@ void			floot(va_list ap, char *format, t_ap *tree)
 		holder = (long double)va_arg(ap, double);
 	precision(format, ap, tree);
 	prec = tree->prec;
-    temp = (decimals(holder, 10, tree));
+	temp = (decimals(holder, 10, tree));
 	holder = (tree->rd && holder >= 0) ? (holder + 1) : (holder);
 	holder = (tree->rd && holder < 0) ? (holder - 1) : (holder);
-	tree->width -= (FLOOT(tree)) ? (7) : (tree->prec + 1); 
+	tree->width -= (FLOOT(tree)) ? (7) : (tree->prec + 1);
 	tree->prec = 10000;
 	tree->ret += (holder > -1 && holder < 0) ? (write(1, "-", 1)) : (0);
 	ft_putstr_fd_prec(ft_maxtoa_base((intmax_t)holder,
 									(intmax_t)base, format), tree);
-	tree->prec = prec;
-    tree->prec = (FLOOT(tree)) ? (6) : (tree->prec);
-    tree->ret += (tree->prec) ? (write(1, ".", 1)) : (0);
+	tree->prec = (FLOOT(tree)) ? (6) : (prec);
+	tree->ret += (tree->prec) ? (write(1, ".", 1)) : (0);
 	tree->width = 0;
 	ft_putstr_fd_prec(ft_maxtoa_base((intmax_t)temp,
 									(intmax_t)base, format), tree);

@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 16:24:30 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/29 13:07:21 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/29 14:38:51 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,10 +86,9 @@ struct					s_ap
 	uint8_t				rd;
 	char				*c;
 	char				car;
-
-
 };
 
+char					*ft_fpad(char *s, t_ap *tree);
 void					precwidth(int many, t_ap *tree, int prec);
 int						bt_putstr_fd(char const *s, t_ap *tree);
 int						bt_putchar(char c, int times);

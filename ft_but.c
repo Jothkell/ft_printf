@@ -6,7 +6,7 @@
 /*   By: jkellehe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/27 19:26:37 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/28 21:38:14 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/29 14:43:04 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,12 +67,12 @@ intmax_t		ft_abs(intmax_t in)
 
 void			ft_putstr_fd_prec(char *s, t_ap *tree)
 {
-	char		*hold;
+	//char		*hold;
 
 	if (FLOATS(tree->c))
 	{
-		ft_pad((hold = ft_strsub(s, 0, tree->prec)), tree);
-		free(hold);
+		ft_pad(s, tree);//(hold = ft_strsub(s, 0, tree->prec)), tree);
+		//free(hold);
 	}
 	else if (NUMBERS(tree->c))
 	{
