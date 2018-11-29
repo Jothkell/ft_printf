@@ -6,7 +6,7 @@
 /*   By: jkellehe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/27 19:36:01 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/29 13:46:38 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/29 13:53:46 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,15 +94,14 @@ void			floot(va_list ap, char *format, t_ap *tree)
 	intmax_t	temp;
 	int			prec;
 
-	if (format[0] == 'f' || format[0] == 'F')
-		base = 10;
+	base = 10;
 	if (format[-1] == 'L')
 		holder = va_arg(ap, long double);
 	else
 		holder = (long double)va_arg(ap, double);
 	precision(format, ap, tree);
 	prec = tree->prec;
-    temp = (decimals(holder, base, tree));
+    temp = (decimals(holder, 10, tree));
 	holder = (tree->rd && holder >= 0) ? (holder + 1) : (holder);
 	holder = (tree->rd && holder < 0) ? (holder - 1) : (holder);
 	tree->width -= (FLOOT(tree)) ? (7) : (tree->prec + 1); 

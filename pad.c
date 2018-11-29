@@ -6,7 +6,7 @@
 /*   By: jkellehe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/27 19:34:01 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/28 21:38:58 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/29 13:54:37 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ char			*ft_spad(char *s, t_ap *tree)
 {
 	char		*delet;
 
-	tree->prec = (tree->prec > ft_strlen(s)) ?
+	tree->prec = (tree->prec > (int)ft_strlen(s)) ?
 		(ft_strlen(s)) : (tree->prec);
 	tree->prec = (tree->prec < 0) ? (10000) : (tree->prec);
 	tree->width -= (tree->prec > 0) ? (tree->prec) : (0);
