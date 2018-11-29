@@ -6,7 +6,7 @@
 /*   By: jkellehe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/27 19:36:01 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/29 13:36:53 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/29 13:46:38 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ intmax_t		decimals(double holder, float base, t_ap *tree)
 	}
 	tip = (int)holder;
 	tip *= (tip < 0) ? (-1) : (1);
-	if (((int)(holder * 10.0) % (int)10.0) >= ((int)10.0 / 2))
+	if (((int)(holder * base) % (int)base) >= ((int)base / 2))
 	{
 		if(tip == 0)
 			tree->rd = 1;
@@ -107,6 +107,7 @@ void			floot(va_list ap, char *format, t_ap *tree)
 	holder = (tree->rd && holder < 0) ? (holder - 1) : (holder);
 	tree->width -= (FLOOT(tree)) ? (7) : (tree->prec + 1); 
 	tree->prec = 10000;
+	tree->ret += (holder > -1 && holder < 0) ? (write(1, "-", 1)) : (0);
 	ft_putstr_fd_prec(ft_maxtoa_base((intmax_t)holder,
 									(intmax_t)base, format), tree);
 	tree->prec = prec;
