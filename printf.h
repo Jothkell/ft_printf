@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 16:24:30 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/28 22:36:07 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/29 12:36:55 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,8 +82,10 @@ struct					s_ap
 	uint8_t				neg;
 	uint8_t				space;
 	uint8_t				set_ret;
+	uint8_t				rd;
 	char				*c;
 	char				car;
+
 
 };
 
