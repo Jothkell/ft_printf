@@ -6,7 +6,7 @@
 /*   By: jkellehe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/27 19:36:01 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/29 12:49:48 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/29 12:50:40 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ intmax_t		decimals(double holder, float base, t_ap *tree)
 		i--;
 	}
 	tip = (int)holder;
-	//tip *= (tip < 0) ? (-1) : (1);
+	tip *= (tip < 0) ? (-1) : (1);
 	if (((int)(holder * base) % (int)base) >= ((int)base / 2))
 	{
 		if(tip == 0)
