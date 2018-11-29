@@ -6,7 +6,7 @@
 /*   By: jkellehe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/27 19:36:01 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/29 13:14:46 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/29 13:28:04 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ intmax_t		decimals(double holder, float base, t_ap *tree)
 	double		top;
 
 	i = tree->prec;
-	holder *= (holder < 0) ? (-1) : (1);
 	i = (i == 10000) ? (6) : (i);
 	tip = (intmax_t)holder;
 	top = (double)tip;
