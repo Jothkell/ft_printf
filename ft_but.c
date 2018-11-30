@@ -6,7 +6,7 @@
 /*   By: jkellehe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/27 19:26:37 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/29 14:45:03 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/29 15:00:01 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int				bt_putstr_fd(char const *s, t_ap *tree)
 {
 	int			ret;
 
+	tree->len += (int)ft_strlen(s);
 	tree->ret += 0;
 	ret = 0;
 	if (!s)
