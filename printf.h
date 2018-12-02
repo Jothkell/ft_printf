@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 16:24:30 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/29 14:38:51 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/11/29 16:07:36 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@
 # define HASH(tree) (tree->hash && (!tree->zero || tree->c[0] == 'p'))
 # define S3(x) (!x->l && !x->ll && !x->decimal && !x->hash && !x->plus)
 # define S2(x) (x->space && !x->neg && !x->left && !x->percent && S3(x))
-# define SINGLESPACE(x) ((x->c[0] == 'd' || x->c[0] == 'i') && S2(x))
+# define SINGLESPACE(x) ((ft_strchr("dif", x->c[0])) && S2(x))
 # define P3(x) (x[i] != '\0' && x[(i - 1)] != '\0' && x[i] != 10)
 # define P2(x) (x[i + 1] != '}' && x[(i + 1)] != '\0' && x[(i - 1)] != '\0')
 # define P4(x) (P2(x) && P3(x))
@@ -86,9 +86,11 @@ struct					s_ap
 	uint8_t				rd;
 	char				*c;
 	char				car;
+	int					whold;
+	int					phold;
 };
 
-char					*ft_fpad(char *s, t_ap *tree);
+char					*ft_fpad(char *s, t_ap *tree, int i);
 void					precwidth(int many, t_ap *tree, int prec);
 int						bt_putstr_fd(char const *s, t_ap *tree);
 int						bt_putchar(char c, int times);
