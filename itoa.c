@@ -6,7 +6,7 @@
 /*   By: jkellehe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/27 19:36:01 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/12/02 15:24:35 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/12/02 15:30:50 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ void			floot(va_list ap, char *format, t_ap *tree)
 	if (format[-1] == 'L')
 		holder = va_arg(ap, long double);
 	else
-		holder = (long double)(float)va_arg(ap, double);
+		holder = (long double)va_arg(ap, double);
 
 	precision(format, ap, tree);
 	prec = tree->prec;
