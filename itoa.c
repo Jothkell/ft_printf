@@ -6,7 +6,7 @@
 /*   By: jkellehe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/27 19:36:01 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/11/29 16:57:58 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/12/02 15:24:35 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,8 @@ intmax_t		decimals(double holder, float base, t_ap *tree)
 			tree->rd = 1;
 			return(0);
 		}
-		tip += (tip > 0) ? (1) : (-1);
+		else if ((tip % 10) != 2)
+			tip += (tip > 0) ? (1) : (-1);
 	}
 	tip *= (tip > 0) ? (1) : (-1);
 	return (tip);
@@ -116,14 +117,13 @@ void			floot(va_list ap, char *format, t_ap *tree)
 	if (format[-1] == 'L')
 		holder = va_arg(ap, long double);
 	else
-		holder = (long double)va_arg(ap, double);
+		holder = (long double)(float)va_arg(ap, double);
 
 	precision(format, ap, tree);
 	prec = tree->prec;
 	temp = (decimals(holder, 10, tree));
-	holder = (tree->rd && holder >= 0) ? (holder + 1) : (holder);
-	holder = (tree->rd && holder < 0) ? (holder - 1) : (holder);
-	//tree->width -= (FLOOT(tree)) ? (7) : (tree->prec + 1);
+	holder = (tree->rd && holder >= 0 && (((int)holder % 10) != 2)) ? (holder + 1) : (holder);
+	holder = (tree->rd && holder < 0 && (((int)holder % 10) != -2)) ? (holder - 1) : (holder);
 	tree->prec = 10000;
 	tree->ret += (holder > -1 && holder < 0) ? (write(1, "-", 1)) : (0);
 	tree->whold = tree->width;
