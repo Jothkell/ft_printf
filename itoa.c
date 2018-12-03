@@ -6,7 +6,7 @@
 /*   By: jkellehe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/27 19:36:01 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/12/02 15:47:40 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/12/02 23:38:50 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,11 +117,11 @@ void			floot(va_list ap, char *format, t_ap *tree)
 	tree->prec = 10000;
 	tree->ret += (holder > -1 && holder < 0) ? (write(1, "-", 1)) : (0);
 	tree->whold = tree->width;
-	tree->width -= (tree->prec == 10000) ? (0) : (tree->prec);
+	//tree->width -= (tree->prec == 10000) ? (0) : (tree->prec);
 	tree->width = (!tree->left) ? (tree->width) : (0);
 	ft_pad(ft_maxtoa_base((intmax_t)holder,
 		(intmax_t)10, format), tree);
-	tree->prec = (FLOOT(tree) || tree->prec == 10000) ? (6) : (tree->phold);
+	tree->prec = (FLOOT(tree) || tree->phold == 10000) ? (6) : (tree->phold);
 	tree->ret += (tree->prec) ? (write(1, ".", 1)) : (0);
 	ft_fpad(ft_maxtoa_base((intmax_t)temp,
 		(intmax_t)10, format), tree, 2);
