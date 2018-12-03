@@ -6,7 +6,7 @@
 /*   By: jkellehe <jkellehe@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/08/23 16:24:30 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/12/02 14:35:07 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/12/02 15:45:20 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,8 @@
 # define FT_PAD1(x) ((x->zero && (CONVZER(x)) && (x->prec == 10000)) && F1(x))
 # define FT_PAD2(x) (!(x->zero && x->dot && !x->z_pad) || FT_PAD1(x))
 # define FLOOT(x) ((!x->prec || x->prec == 10000) && !x->dot)
+# define FLO1(x) (x >= 0 && (((int)x % 10) != 2))
+# define FLO2(x) (x < 0 && (((int)x % 10) != -2))
 
 typedef struct s_ap				t_ap;
 

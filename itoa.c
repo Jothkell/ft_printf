@@ -6,7 +6,7 @@
 /*   By: jkellehe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/27 19:36:01 by jkellehe          #+#    #+#             */
-/*   Updated: 2018/12/02 15:30:50 by jkellehe         ###   ########.fr       */
+/*   Updated: 2018/12/02 15:47:40 by jkellehe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int				allnine(intmax_t tip)
 {
 	if (ft_abs(tip % 10) != 9)
 		return (0);
-	while((tip /= 10))
+	while ((tip /= 10))
 	{
 		if (ft_abs(tip % 10) != 9)
 			return (0);
@@ -83,22 +83,16 @@ intmax_t		decimals(double holder, float base, t_ap *tree)
 	tip = (intmax_t)holder;
 	top = (double)tip;
 	holder -= top;
-	while ((i < tree->prec) && i < 18)
-	{
+	while ((i < tree->prec) && i++ < 18)
 		holder *= base;
-		i++;
-	}
 	tip = (intmax_t)holder;
 	top = (double)tip;
 	holder -= top;
 	holder *= (holder < 0) ? (-1) : (1);
 	if (((int)(holder * base) % (int)base) >= ((int)base / 2))
 	{
-		if (tip == 0 || allnine(tip))
-		{
-			tree->rd = 1;
-			return(0);
-		}
+		if ((tip == 0 || allnine(tip)) && (tree->rd = 1))
+			return (0);
 		else if ((tip % 10) != 2)
 			tip += (tip > 0) ? (1) : (-1);
 	}
@@ -109,30 +103,26 @@ intmax_t		decimals(double holder, float base, t_ap *tree)
 void			floot(va_list ap, char *format, t_ap *tree)
 {
 	long double holder;
-	float		base;
 	intmax_t	temp;
-	int			prec;
 
-	base = 10;
 	if (format[-1] == 'L')
 		holder = va_arg(ap, long double);
 	else
 		holder = (long double)va_arg(ap, double);
-
 	precision(format, ap, tree);
-	prec = tree->prec;
+	tree->phold = tree->prec;
 	temp = (decimals(holder, 10, tree));
-	holder = (tree->rd && holder >= 0 && (((int)holder % 10) != 2)) ? (holder + 1) : (holder);
-	holder = (tree->rd && holder < 0 && (((int)holder % 10) != -2)) ? (holder - 1) : (holder);
+	holder = (tree->rd && FLO1(holder)) ? (holder + 1) : (holder);
+	holder = (tree->rd && FLO2(holder)) ? (holder - 1) : (holder);
 	tree->prec = 10000;
 	tree->ret += (holder > -1 && holder < 0) ? (write(1, "-", 1)) : (0);
 	tree->whold = tree->width;
 	tree->width -= (tree->prec == 10000) ? (0) : (tree->prec);
-    tree->width = (!tree->left) ? (tree->width) : (0);
+	tree->width = (!tree->left) ? (tree->width) : (0);
 	ft_pad(ft_maxtoa_base((intmax_t)holder,
-						   (intmax_t)base, format), tree);
-	tree->prec = (FLOOT(tree) || prec == 10000) ? (6) : (prec);
+		(intmax_t)10, format), tree);
+	tree->prec = (FLOOT(tree) || tree->prec == 10000) ? (6) : (tree->phold);
 	tree->ret += (tree->prec) ? (write(1, ".", 1)) : (0);
 	ft_fpad(ft_maxtoa_base((intmax_t)temp,
-						   (intmax_t)base, format), tree, 2);
+		(intmax_t)10, format), tree, 2);
 }
